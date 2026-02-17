@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IBES - Plataforma Educacional</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .login-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0066cc 0%, #ff7300 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 42px;
+            background: linear-gradient(135deg, #0066cc, #ff7300);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #0066cc;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0066cc, #ff7300);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: #ff7300;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #cc5c00;
+        }
+
+        .btn-link {
+            background: none;
+            color: #0066cc;
+            text-decoration: underline;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .header {
+            background: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h2 {
+            font-size: 24px;
+        }
+
+        .blue { color: #0066cc; }
+        .orange { color: #ff7300; }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .tab.active {
+            background: #0066cc;
+            color: white;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-info {
+            text-align: right;
+            font-size: 13px;
+        }
+
+        .btn-logout {
+            padding: 6px 12px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn-logout:hover {
+            background: #cc0000;
+        }
+
+        .content {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #0066cc;
+        }
+
+        .card h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .badge-mestrado {
+            background: #e6f2ff;
+            color: #0066cc;
+        }
+
+        .badge-doutorado {
+            background: #ffe6cc;
+            color: #ff7300;
+        }
+
+        .btn-card {
+            width: 100%;
+            padding: 10px;
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .btn-card:hover {
+            background: #0052a3;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .chat-container {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f9f9f9;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 70%;
+        }
+
+        .chat-message.sent {
+            background: #0066cc;
+            color: white;
+            margin-left: auto;
+        }
+
+        .chat-message.received {
+            background: white;
+            border: 1px solid #e0e0e0;
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            border-top: 2px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+        }
+
+        .video-player {
+            width: 100%;
+            max-width: 800px;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .file-upload-area {
+            border: 3px dashed #0066cc;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            background: #f0f8ff;
+            cursor: pointer;
+            margin: 15px 0;
+        }
+
+        .file-upload-area:hover {
+            background: #e3f2fd;
+        }
+
+        .file-list {
+            margin-top: 15px;
+        }
+
+        .file-item {
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: #f5f5f5;
+            font-weight: bold;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TELA DE LOGIN -->
+    <div id="loginPage" class="login-page">
+        <div class="login-box">
+            <div class="logo">
+                <h1>IBES</h1>
+                <p>Instituto Brasileiro de Educação Superior</p>
+            </div>
+            
+            <div id="loginError" class="error-message hidden"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" required placeholder="seu@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary">Entrar</button>
+            </form>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn-link" onclick="showRegisterForm()">Criar nova conta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TELA DE CADASTRO -->
+    <div id="registerPage" class="login-page hidden">
+        <div class="login-box">
+            <div class="logo">
+                <h1>IBES</h1>
+                <p>Criar Nova Conta</p>
+            </div>
+            
+            <div id="registerError" class="error-message hidden"></div>
+            <div id="registerSuccess" class="success-message hidden"></div>
+            
+            <form id="registerForm">
+                <div class="form-group">
+                    <label>Nome Completo</label>
+                    <input type="text" id="regName" required placeholder="João Silva">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="regEmail" required placeholder="joao@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" id="regPassword" required placeholder="••••••••" minlength="6">
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Usuário</label>
+                    <select id="regType" required>
+                        <option value="">Selecione...</option>
+                        <option value="student">Aluno</option>
+                        <option value="professor">Professor</option>
+                    </select>
+                </div>
+                <div class="form-group" id="courseGroup" style="display:none;">
+                    <label>Curso</label>
+                    <select id="regCourse">
+                        <option value="mestrado">Mestrado em Educação</option>
+                        <option value="doutorado">Doutorado em Educação</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
+            </form>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn-link" onclick="showLoginForm()">Já tenho conta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- APLICAÇÃO -->
+    <div id="appPage" class="hidden">
+        <div class="header">
+            <div class="container">
+                <div class="header-content">
+                    <h2><span class="blue">IBES</span> <span class="orange">Plataforma</span></h2>
+                    <div class="tabs" id="tabs"></div>
+                    <div class="user-section">
+                        <div class="user-info" id="userInfo"></div>
+                        <button class="btn-logout" onclick="logout()">Sair</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- ADMINISTRADOR - GERENCIAR TURMAS -->
+            <div id="page-admin" class="content hidden">
+                <h1>⚙️ Administração</h1>
+                
+                <div style="margin: 20px 0;">
+                    <button class="btn btn-secondary" onclick="showModal('createProfessorModal')">👨‍🏫 Cadastrar Professor</button>
+                    <button class="btn btn-secondary" onclick="showModal('createStudentModal')" style="margin-left: 10px;">👨‍🎓 Cadastrar Aluno</button>
+                    <button class="btn btn-secondary" onclick="showModal('createClassModal')" style="margin-left: 10px;">📚 Criar Turma</button>
+                </div>
+
+                <h2>Professores Cadastrados</h2>
+                <div id="professorList"></div>
+                
+                <h2 style="margin-top: 30px;">Alunos Cadastrados</h2>
+                <div id="studentList"></div>
+                
+                <h2 style="margin-top: 30px;">Turmas Cadastradas</h2>
+                <div id="classList" class="grid"></div>
+            </div>
+
+            <!-- PROFESSOR - MINHAS TURMAS -->
+            <div id="page-turmas" class="content hidden">
+                <h1>📚 Minhas Turmas</h1>
+                <div id="professorClasses" class="grid"></div>
+            </div>
+
+            <!-- PROFESSOR - TURMA ESPECÍFICA -->
+            <div id="page-turma-detalhe" class="content hidden">
+                <button class="btn btn-link" onclick="showPage('turmas')">← Voltar para Minhas Turmas</button>
+                <h1 id="className"></h1>
+                
+                <div style="margin: 20px 0;">
+                    <button class="btn btn-secondary" onclick="showModal('uploadVideoModal')">🎥 Enviar Vídeo-aula</button>
+                    <button class="btn btn-secondary" onclick="showModal('uploadMaterialModal')" style="margin-left: 10px;">📄 Enviar Material</button>
+                </div>
+
+                <h2>Vídeo-aulas</h2>
+                <div id="classVideos" class="grid"></div>
+
+                <h2 style="margin-top: 30px;">Materiais</h2>
+                <div id="classMaterials" class="grid"></div>
+
+                <h2 style="margin-top: 30px;">Alunos Matriculados</h2>
+                <div id="classStudents"></div>
+            </div>
+
+            <!-- ALUNO - MATERIAIS -->
+            <div id="page-materiais" class="content hidden">
+                <h1>📚 Materiais e Vídeo-aulas</h1>
+                <div id="studentMaterials" class="grid"></div>
+            </div>
+
+            <!-- ALUNO - ASSISTIR AULA -->
+            <div id="page-assistir" class="content hidden">
+                <button class="btn btn-link" onclick="showPage('materiais')">← Voltar</button>
+                <h1 id="videoTitle"></h1>
+                <div id="videoPlayerContainer"></div>
+                <div id="videoDescription" style="margin-top: 20px;"></div>
+            </div>
+
+            <!-- ALUNO - ENVIAR MATERIAL PARA PROFESSOR -->
+            <div id="page-enviar" class="content hidden">
+                <h1>📤 Enviar Material para Professor</h1>
+                
+                <div class="form-group">
+                    <label>Selecionar Turma</label>
+                    <select id="selectClassToSend" class="form-group"></select>
+                </div>
+
+                <div class="form-group">
+                    <label>Título</label>
+                    <input type="text" id="studentFileTitle" placeholder="Ex: Trabalho Final">
+                </div>
+
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea id="studentFileDesc" rows="3" placeholder="Descreva o material..."></textarea>
+                </div>
+
+                <div class="file-upload-area" onclick="document.getElementById('studentFileInput').click()">
+                    <p style="font-size:36px;">📁</p>
+                    <p style="color:#0066cc; font-weight:bold;">Clique para selecionar arquivo</p>
+                    <p id="studentFileName" style="color:#666; font-size:12px; margin-top:5px;">Nenhum arquivo selecionado</p>
+                    <input type="file" id="studentFileInput" style="display:none;" onchange="updateFileName('studentFileName', this)">
+                </div>
+
+                <button class="btn btn-primary" onclick="sendStudentFile()">Enviar Material</button>
+
+                <h2 style="margin-top: 30px;">Meus Envios</h2>
+                <div id="studentSentFiles" class="file-list"></div>
+            </div>
+
+            <!-- ALUNO - ORIENTAÇÃO -->
+            <div id="page-orientacao" class="content hidden">
+                <h1>📖 Área de Orientação</h1>
+                
+                <h2>Chat com Orientador</h2>
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages"></div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chatInput" class="chat-input" placeholder="Digite sua mensagem...">
+                        <button class="btn btn-secondary" onclick="sendChatMessage()">Enviar</button>
+                    </div>
+                </div>
+
+                <h2 style="margin-top: 30px;">Documentos da Orientação</h2>
+                <button class="btn btn-secondary" onclick="showModal('uploadOrientationModal')">📤 Enviar Documento</button>
+                <div id="orientationDocs" class="file-list"></div>
+            </div>
+
+            <!-- PROFESSOR - ORIENTAÇÕES -->
+            <div id="page-orientacoes" class="content hidden">
+                <h1>👥 Minhas Orientações</h1>
+                <div id="professorOrientations" class="grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CRIAR TURMA -->
+    <div id="createClassModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Criar Nova Turma</h2>
+                <button class="modal-close" onclick="closeModal('createClassModal')">×</button>
+            </div>
+            <form id="createClassForm">
+                <div class="form-group">
+                    <label>Nome da Turma</label>
+                    <input type="text" id="newClassName" required placeholder="Ex: Metodologia de Pesquisa">
+                </div>
+                <div class="form-group">
+                    <label>Curso</label>
+                    <select id="newClassCourse" required>
+                        <option value="mestrado">Mestrado</option>
+                        <option value="doutorado">Doutorado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Professor Responsável</label>
+                    <select id="newClassProfessor" required></select>
+                </div>
+                <button type="submit" class="btn btn-primary">Criar Turma</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: CADASTRAR PROFESSOR -->
+    <div id="createProfessorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Cadastrar Novo Professor</h2>
+                <button class="modal-close" onclick="closeModal('createProfessorModal')">×</button>
+            </div>
+            <div id="professorModalError" class="error-message hidden"></div>
+            <div id="professorModalSuccess" class="success-message hidden"></div>
+            <form id="createProfessorForm">
+                <div class="form-group">
+                    <label>Nome Completo</label>
+                    <input type="text" id="newProfName" required placeholder="Prof. João Silva">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="newProfEmail" required placeholder="joao.silva@ibes.edu.br">
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" id="newProfPassword" required placeholder="••••••••" minlength="6">
+                </div>
+                <div class="form-group">
+                    <label>Especialidade</label>
+                    <input type="text" id="newProfSpecialty" placeholder="Ex: Metodologia de Pesquisa">
+                </div>
+                <button type="submit" class="btn btn-primary">Cadastrar Professor</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: CADASTRAR ALUNO -->
+    <div id="createStudentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Cadastrar Novo Aluno</h2>
+                <button class="modal-close" onclick="closeModal('createStudentModal')">×</button>
+            </div>
+            <div id="studentModalError" class="error-message hidden"></div>
+            <div id="studentModalSuccess" class="success-message hidden"></div>
+            <form id="createStudentForm">
+                <div class="form-group">
+                    <label>Nome Completo</label>
+                    <input type="text" id="newStudentName" required placeholder="João Silva">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="newStudentEmail" required placeholder="joao.silva@ibes.edu.br">
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" id="newStudentPassword" required placeholder="••••••••" minlength="6">
+                </div>
+                <div class="form-group">
+                    <label>Curso</label>
+                    <select id="newStudentCourse" required>
+                        <option value="">Selecione...</option>
+                        <option value="mestrado">Mestrado em Educação</option>
+                        <option value="doutorado">Doutorado em Educação</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Turmas (Segure Ctrl para selecionar múltiplas)</label>
+                    <select id="newStudentClasses" multiple style="height: 120px;">
+                        <option value="">Carregando turmas...</option>
+                    </select>
+                    <small style="color:#666; font-size:12px;">Apenas turmas do curso selecionado</small>
+                </div>
+                <button type="submit" class="btn btn-primary">Cadastrar Aluno</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: UPLOAD VÍDEO -->
+    <div id="uploadVideoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Enviar Vídeo-aula</h2>
+                <button class="modal-close" onclick="closeModal('uploadVideoModal')">×</button>
+            </div>
+            <form id="uploadVideoForm">
+                <div class="form-group">
+                    <label>Título da Aula</label>
+                    <input type="text" id="videoTitleInput" required>
+                </div>
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea id="videoDescriptionInput" rows="3" required></textarea>
+                </div>
+                <div class="file-upload-area" onclick="document.getElementById('videoFile').click()">
+                    <p style="font-size:36px;">🎥</p>
+                    <p style="color:#0066cc; font-weight:bold;">Clique para selecionar vídeo</p>
+                    <p id="videoFileName" style="color:#666; font-size:12px; margin-top:5px;">Formatos: MP4, AVI, MOV</p>
+                    <input type="file" id="videoFile" accept="video/*" style="display:none;" onchange="updateFileName('videoFileName', this)">
+                </div>
+                <button type="submit" class="btn btn-primary">Enviar Vídeo</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: UPLOAD MATERIAL -->
+    <div id="uploadMaterialModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Enviar Material</h2>
+                <button class="modal-close" onclick="closeModal('uploadMaterialModal')">×</button>
+            </div>
+            <form id="uploadMaterialForm">
+                <div class="form-group">
+                    <label>Título</label>
+                    <input type="text" id="materialTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea id="materialDescription" rows="3" required></textarea>
+                </div>
+                <div class="file-upload-area" onclick="document.getElementById('materialFile').click()">
+                    <p style="font-size:36px;">📄</p>
+                    <p style="color:#0066cc; font-weight:bold;">Clique para selecionar arquivo</p>
+                    <p id="materialFileName" style="color:#666; font-size:12px; margin-top:5px;">PDF, DOC, DOCX, etc.</p>
+                    <input type="file" id="materialFile" style="display:none;" onchange="updateFileName('materialFileName', this)">
+                </div>
+                <button type="submit" class="btn btn-primary">Enviar Material</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: UPLOAD DOCUMENTO ORIENTAÇÃO -->
+    <div id="uploadOrientationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Enviar Documento de Orientação</h2>
+                <button class="modal-close" onclick="closeModal('uploadOrientationModal')">×</button>
+            </div>
+            <form id="uploadOrientationForm">
+                <div class="form-group">
+                    <label>Título do Documento</label>
+                    <input type="text" id="orientationDocTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>Versão</label>
+                    <input type="text" id="orientationDocVersion" placeholder="Ex: 1.0" required>
+                </div>
+                <div class="file-upload-area" onclick="document.getElementById('orientationDocFile').click()">
+                    <p style="font-size:36px;">📄</p>
+                    <p style="color:#0066cc; font-weight:bold;">Clique para selecionar documento</p>
+                    <p id="orientationDocFileName" style="color:#666; font-size:12px; margin-top:5px;">PDF, DOC, DOCX</p>
+                    <input type="file" id="orientationDocFile" style="display:none;" onchange="updateFileName('orientationDocFileName', this)">
+                </div>
+                <button type="submit" class="btn btn-primary">Enviar Documento</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+</body>
+</html>
