@@ -34,6 +34,11 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         super().end_headers()
 
     def do_GET(self):
+        if self.path == "/" or self.path == "":
+            self.send_response(302)
+            self.send_header("Location", "/amazon-asin-checker.html")
+            self.end_headers()
+            return
         if self.path.startswith("/proxy?url="):
             raw = self.path[len("/proxy?url="):]
             url = urllib.parse.unquote(raw)
