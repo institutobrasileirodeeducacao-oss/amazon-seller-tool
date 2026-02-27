@@ -1,1 +1,4 @@
-# Sem dependencias externas - usa apenas biblioteca padrao do Python
+flask==3.0.3
+flask-login==0.6.3
+bcrypt==4.1.3
+stripe==10.5.0
