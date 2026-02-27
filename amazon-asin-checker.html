@@ -1,0 +1,4298 @@
+﻿﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amazon Seller - ASIN, Fornecedores e Prep Centers</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f3f3f3;
+      color: #111;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #131921;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    header img {
+      height: 36px;
+    }
+
+    header h1 {
+      color: #ff9900;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 32px auto;
+      padding: 0 16px;
+    }
+
+    .search-box {
+      background: #fff;
+      border-radius: 8px;
+      padding: 28px 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 24px;
+    }
+
+    .search-box h2 {
+      font-size: 1.1rem;
+      margin-bottom: 18px;
+      color: #131921;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .input-row input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: border-color 0.2s;
+    }
+
+    .input-row input:focus {
+      outline: none;
+      border-color: #ff9900;
+    }
+
+    .input-row button {
+      padding: 12px 28px;
+      background: #ff9900;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #131921;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .input-row button:hover {
+      background: #e68a00;
+    }
+
+    .input-row button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .hint {
+      margin-top: 10px;
+      font-size: 0.82rem;
+      color: #666;
+    }
+
+    #result {
+      display: none;
+    }
+
+    .product-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 24px 28px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 18px;
+    }
+
+    .product-header {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .product-header img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      background: #fafafa;
+      flex-shrink: 0;
+    }
+
+    .product-header .info h3 {
+      font-size: 1rem;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .product-header .info .asin-tag {
+      display: inline-block;
+      background: #131921;
+      color: #ff9900;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .meta-item {
+      background: #f8f8f8;
+      border-radius: 6px;
+      padding: 12px 14px;
+    }
+
+    .meta-item .label {
+      font-size: 0.75rem;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .meta-item .value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #111;
+    }
+
+    .eligibility-box {
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 20px;
+    }
+
+    .eligibility-box.ok {
+      background: #e6f4ea;
+      border: 1.5px solid #34a853;
+    }
+
+    .eligibility-box.warning {
+      background: #fff8e1;
+      border: 1.5px solid #f9a825;
+    }
+
+    .eligibility-box.restricted {
+      background: #fce8e6;
+      border: 1.5px solid #d93025;
+    }
+
+    .eligibility-box h4 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .eligibility-box .status-icon {
+      font-size: 1.2rem;
+    }
+
+    .eligibility-box ul {
+      padding-left: 20px;
+      font-size: 0.88rem;
+      line-height: 1.7;
+      color: #333;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover { opacity: 0.85; }
+
+    .btn-primary {
+      background: #ff9900;
+      color: #131921;
+    }
+
+    .btn-secondary {
+      background: #131921;
+      color: #fff;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: #131921;
+      border: 2px solid #131921;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 32px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #ff9900;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 14px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .error-box {
+      display: none;
+      background: #fce8e6;
+      border: 1.5px solid #d93025;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 18px;
+      color: #c62828;
+    }
+
+    .history-section {
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .history-section h3 {
+      font-size: 0.95rem;
+      margin-bottom: 14px;
+      color: #444;
+    }
+
+    .history-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .history-item {
+      background: #f3f3f3;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 5px 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .history-item:hover {
+      background: #ff9900;
+      border-color: #ff9900;
+      color: #131921;
+    }
+
+    .clear-history {
+      background: none;
+      border: none;
+      color: #999;
+      font-size: 0.8rem;
+      cursor: pointer;
+      margin-left: auto;
+      display: block;
+      margin-top: 10px;
+    }
+
+    .clear-history:hover { color: #d93025; }
+
+    .restricted-categories {
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-top: 24px;
+    }
+
+    .restricted-categories h3 {
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+      color: #444;
+    }
+
+    .cat-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .cat-tag {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .cat-tag.restricted { background: #fce8e6; color: #c62828; border: 1px solid #f4a99a; }
+    .cat-tag.approval { background: #fff8e1; color: #e65100; border: 1px solid #ffcc02; }
+    .cat-tag.free { background: #e6f4ea; color: #1b5e20; border: 1px solid #81c784; }
+
+    .tab-nav {
+      background: #1a232e;
+      display: flex;
+      gap: 0;
+      padding: 0 24px;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: #aaa;
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 13px 22px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .tab-btn:hover { color: #fff; }
+    .tab-btn.active { color: #ff9900; border-bottom-color: #ff9900; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #131921;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #ff9900;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .filter-btn {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1.5px solid #ddd;
+      background: #fff;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: #444;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      background: #ff9900;
+      border-color: #ff9900;
+      color: #131921;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .supplier-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: box-shadow 0.2s;
+    }
+
+    .supplier-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+
+    .supplier-card .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .supplier-card h4 {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #131921;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 12px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .badge.china { background: #e3f2fd; color: #0d47a1; }
+    .badge.usa { background: #e8f5e9; color: #1b5e20; }
+    .badge.global { background: #f3e5f5; color: #4a148c; }
+    .badge.liquidation { background: #fff3e0; color: #e65100; }
+    .badge.directory { background: #fce4ec; color: #880e4f; }
+    .badge.br-rec { background: #e0f2f1; color: #004d40; border: 1.5px solid #26a69a; }
+
+    .supplier-card .desc {
+      font-size: 0.83rem;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    .tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .tag {
+      background: #f3f3f3;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      color: #444;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+    }
+
+    .card-footer .stars {
+      color: #ff9900;
+      font-size: 0.85rem;
+    }
+
+    .card-footer a {
+      font-size: 0.82rem;
+      color: #0066c0;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .card-footer a:hover { text-decoration: underline; }
+
+    .pros-cons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      font-size: 0.78rem;
+    }
+
+    .pros { color: #2e7d32; }
+    .cons { color: #c62828; }
+
+    .pros li, .cons li {
+      list-style: none;
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.5;
+    }
+
+    .pros li::before { content: "+"; position: absolute; left: 0; font-weight: 700; }
+    .cons li::before { content: "-"; position: absolute; left: 0; font-weight: 700; }
+
+    .price-badge {
+      background: #131921;
+      color: #ff9900;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 4px;
+    }
+
+    .location-tag {
+      font-size: 0.78rem;
+      color: #666;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .intl-badge {
+      background: #e3f2fd;
+      color: #0d47a1;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .sc-section {
+      margin-bottom: 28px;
+    }
+
+    .sc-section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .sc-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #131921;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+
+    .sc-section-header h3 {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #131921;
+    }
+
+    .sc-desc {
+      font-size: 0.85rem;
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 12px;
+      padding-left: 52px;
+    }
+
+    .sc-tip-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+      padding-left: 52px;
+    }
+
+    .sc-tip {
+      background: #f8f8f8;
+      border-radius: 6px;
+      padding: 12px 14px;
+      border-left: 3px solid #ff9900;
+    }
+
+    .sc-tip-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #131921;
+      margin-bottom: 4px;
+    }
+
+    .sc-tip-text {
+      font-size: 0.78rem;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    .sc-action-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-left: 52px;
+    }
+
+    .sc-action-item {
+      border-radius: 6px;
+      padding: 12px 16px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .sc-action-label {
+      font-size: 0.78rem;
+      font-weight: 800;
+      white-space: nowrap;
+      min-width: 110px;
+    }
+
+    .sc-action-text {
+      font-size: 0.82rem;
+      color: #333;
+      line-height: 1.5;
+    }
+
+    .sc-red { background: #fce8e6; border-left: 4px solid #d93025; }
+    .sc-red .sc-action-label { color: #c62828; }
+    .sc-yellow { background: #fff8e1; border-left: 4px solid #f9a825; }
+    .sc-yellow .sc-action-label { color: #e65100; }
+    .sc-blue { background: #e3f2fd; border-left: 4px solid #1565c0; }
+    .sc-blue .sc-action-label { color: #0d47a1; }
+
+    .sc-links-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      padding-left: 52px;
+    }
+
+    .sc-link-card {
+      background: #fff;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      padding: 14px 16px;
+      text-decoration: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      display: block;
+    }
+
+    .sc-link-card:hover {
+      border-color: #ff9900;
+      box-shadow: 0 2px 8px rgba(255,153,0,0.2);
+    }
+
+    .sc-link-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #131921;
+      margin-bottom: 3px;
+    }
+
+    .sc-link-sub {
+      font-size: 0.75rem;
+      color: #666;
+    }
+
+    @media (max-width: 600px) {
+      .sc-desc, .sc-tip-grid, .sc-action-list, .sc-links-grid { padding-left: 0; }
+      .sc-tip-grid, .sc-links-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ======= CALCULADORA ======= */
+    .calc-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .calc-col { display: flex; flex-direction: column; gap: 16px; }
+
+    .calc-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 18px 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+    }
+
+    .calc-card-title {
+      font-size: 0.88rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #131921;
+      border-bottom: 2px solid #ff9900;
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+    }
+
+    .calc-field {
+      margin-bottom: 12px;
+    }
+
+    .calc-field label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 5px;
+    }
+
+    .calc-field input, .calc-field select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1.5px solid #ddd;
+      border-radius: 5px;
+      font-size: 0.92rem;
+      transition: border-color 0.2s;
+    }
+
+    .calc-field input:focus, .calc-field select:focus {
+      outline: none;
+      border-color: #ff9900;
+    }
+
+    .calc-input-row {
+      display: flex;
+      align-items: center;
+      border: 1.5px solid #ddd;
+      border-radius: 5px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .calc-input-row:focus-within { border-color: #ff9900; }
+
+    .calc-prefix, .calc-suffix {
+      background: #f3f3f3;
+      padding: 8px 10px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #555;
+      border: none;
+    }
+
+    .calc-input-row input {
+      border: none;
+      flex: 1;
+      padding: 8px 10px;
+      font-size: 0.92rem;
+    }
+
+    .calc-input-row input:focus { outline: none; }
+
+    .calc-hint {
+      font-size: 0.72rem;
+      color: #888;
+      display: block;
+      margin-top: 3px;
+    }
+
+    .calc-result-card {
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      background: #131921;
+    }
+
+    .calc-result-card.good { background: #1b5e20; }
+    .calc-result-card.ok { background: #e65100; }
+    .calc-result-card.bad { background: #c62828; }
+
+    .calc-verdict {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+
+    .calc-verdict-sub {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.8);
+      margin-top: 6px;
+    }
+
+    .calc-row-result {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 0.85rem;
+      border-bottom: 1px solid #f3f3f3;
+    }
+
+    .calc-indent { padding-left: 14px; color: #555; }
+
+    .calc-subtotal {
+      font-weight: 700;
+      color: #131921;
+      border-bottom: 2px solid #ddd;
+    }
+
+    .calc-total {
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: #131921;
+    }
+
+    .calc-divider { border-top: 1px dashed #ddd; margin: 6px 0; }
+
+    .calc-val-green { color: #2e7d32; font-weight: 700; }
+    .calc-val-red { color: #c62828; font-weight: 600; }
+
+    .calc-bar-chart { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+
+    .chart-row { display: flex; align-items: center; gap: 10px; font-size: 0.78rem; }
+    .chart-label { min-width: 110px; color: #555; text-align: right; }
+    .chart-bar-wrap { flex: 1; background: #f3f3f3; border-radius: 4px; height: 18px; overflow: hidden; }
+    .chart-bar { height: 100%; border-radius: 4px; transition: width 0.4s; }
+    .chart-value { min-width: 50px; font-weight: 700; color: #131921; font-size: 0.78rem; }
+
+    @media (max-width: 700px) {
+      .calc-wrapper { grid-template-columns: 1fr; }
+    }
+
+    /* ======= URL SEARCH ======= */
+    .url-search-box {
+      background: #fff;
+      border-radius: 8px;
+      padding: 22px 26px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      border-left: 4px solid #ff9900;
+    }
+
+    .url-search-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #131921;
+      margin-bottom: 6px;
+    }
+
+    .url-search-desc {
+      font-size: 0.82rem;
+      color: #666;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .url-input-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .url-input-row input {
+      flex: 1;
+      padding: 11px 14px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      transition: border-color 0.2s;
+    }
+
+    .url-input-row input:focus {
+      outline: none;
+      border-color: #ff9900;
+    }
+
+    .url-input-row button {
+      padding: 11px 24px;
+      background: #ff9900;
+      border: none;
+      border-radius: 6px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: #131921;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+
+    .url-input-row button:hover { background: #e68a00; }
+    .url-input-row button:disabled { background: #ccc; cursor: not-allowed; }
+
+    .url-status {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      padding: 10px 14px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .url-status.loading { background: #e3f2fd; color: #1565c0; }
+    .url-status.error { background: #fce8e6; color: #c62828; }
+    .url-status.step { background: #fff8e1; color: #e65100; }
+
+    .url-spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #90caf9;
+      border-top: 2px solid #1565c0;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    .url-result {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #eee;
+    }
+
+    .url-result-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+
+    .url-result-item {
+      background: #f8f8f8;
+      border-radius: 6px;
+      padding: 10px 14px;
+    }
+
+    .url-result-label {
+      font-size: 0.72rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 4px;
+    }
+
+    .url-result-value {
+      font-size: 0.9rem;
+      color: #131921;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    @media (max-width: 600px) {
+      .url-input-row { flex-direction: column; }
+      .url-result-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .input-row { flex-direction: column; }
+      .product-header { flex-direction: column; }
+      .product-header img { width: 80px; height: 80px; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .pros-cons { grid-template-columns: 1fr; }
+    }
+
+    /* ======= SP-API CONFIG ======= */
+    .api-config-banner {
+      background: #fff8e1;
+      border: 1.5px solid #f9a825;
+      border-radius: 8px;
+      padding: 13px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .api-config-banner.api-config-ok {
+      background: #e6f4ea;
+      border-color: #34a853;
+    }
+
+    .api-config-banner-text {
+      font-size: 0.85rem;
+      color: #333;
+      line-height: 1.4;
+    }
+
+    .api-config-open-btn {
+      background: #131921;
+      color: #ff9900;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .api-config-panel {
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+      margin-bottom: 16px;
+      border: 1.5px solid #ddd;
+    }
+
+    .api-config-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #131921;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .api-config-close {
+      background: none;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .api-config-desc {
+      font-size: 0.82rem;
+      color: #555;
+      margin-bottom: 14px;
+      line-height: 1.5;
+      background: #f8f8f8;
+      padding: 10px 14px;
+      border-radius: 6px;
+      border-left: 3px solid #ff9900;
+    }
+
+    .api-config-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .api-step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 0.83rem;
+      color: #444;
+      line-height: 1.5;
+    }
+
+    .api-step-num {
+      background: #ff9900;
+      color: #131921;
+      font-weight: 900;
+      font-size: 0.78rem;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .api-fields-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 12px;
+    }
+
+    .api-field label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #444;
+      margin-bottom: 4px;
+    }
+
+    .api-field input {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1.5px solid #ddd;
+      border-radius: 5px;
+      font-size: 0.85rem;
+      transition: border-color 0.2s;
+    }
+
+    .api-field input:focus {
+      outline: none;
+      border-color: #ff9900;
+    }
+
+    .api-field-hint {
+      font-size: 0.7rem;
+      color: #888;
+      display: block;
+      margin-top: 3px;
+    }
+
+    /* REAL ELIGIBILITY BOX */
+    .real-elig-box {
+      border-radius: 8px;
+      margin-top: 12px;
+      overflow: hidden;
+      border: 1.5px solid #1565c0;
+    }
+
+    .real-elig-header {
+      background: #1565c0;
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .real-elig-badge {
+      background: #ff9900;
+      color: #131921;
+      font-size: 0.68rem;
+      font-weight: 900;
+      padding: 2px 7px;
+      border-radius: 3px;
+      letter-spacing: 0.5px;
+    }
+
+    .real-elig-loading {
+      padding: 14px 18px;
+      font-size: 0.85rem;
+      color: #555;
+      background: #e3f2fd;
+    }
+
+    .real-elig-result {
+      padding: 14px 18px;
+      font-size: 0.88rem;
+    }
+
+    .real-elig-ok { background: #e6f4ea; }
+    .real-elig-warn { background: #fff8e1; }
+    .real-elig-block { background: #fce8e6; }
+    .real-elig-direct { background: #e8f0fe; }
+
+    .sc-direct-guide {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: #fff;
+      border-radius: 6px;
+      padding: 12px 16px;
+    }
+
+    .sc-guide-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.82rem;
+      color: #333;
+    }
+
+    .sc-guide-num {
+      background: #1565c0;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 900;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .real-elig-status {
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .real-elig-ok .real-elig-status { color: #1b5e20; }
+    .real-elig-warn .real-elig-status { color: #e65100; }
+    .real-elig-block .real-elig-status { color: #c62828; }
+
+    .real-elig-reasons { margin-top: 8px; font-size: 0.82rem; color: #444; line-height: 1.6; }
+    .real-elig-reasons li { margin-left: 16px; }
+
+    .btn-real {
+      background: #1565c0;
+      color: #fff;
+      border: none;
+    }
+
+    .btn-real:hover { background: #0d47a1; opacity: 1; }
+
+    /* ======= SMART SEARCH ======= */
+    .smart-hero {
+      background: linear-gradient(135deg, #131921 0%, #1a2f47 100%);
+      border-radius: 12px; padding: 32px 28px; margin-bottom: 18px; text-align: center;
+    }
+    .smart-hero-title { font-size: 1.4rem; font-weight: 900; color: #ff9900; margin-bottom: 8px; }
+    .smart-hero-sub { font-size: 0.88rem; color: #aaa; margin-bottom: 20px; }
+    .smart-url-row { display: flex; gap: 10px; max-width: 700px; margin: 0 auto; }
+    .smart-url-row input {
+      flex: 1; padding: 13px 16px; border: 2px solid #333; border-radius: 7px;
+      background: #0f1923; color: #fff; font-size: 0.9rem; transition: border-color 0.2s;
+    }
+    .smart-url-row input:focus { outline: none; border-color: #ff9900; }
+    .smart-url-row input::placeholder { color: #666; }
+    .smart-url-row button {
+      padding: 13px 26px; background: #ff9900; border: none; border-radius: 7px;
+      font-weight: 900; font-size: 0.95rem; color: #131921; cursor: pointer; white-space: nowrap;
+    }
+    .smart-url-row button:hover { background: #e68a00; }
+    .smart-url-row button:disabled { background: #555; color: #999; cursor: not-allowed; }
+    .smart-examples { font-size: 0.75rem; color: #666; margin-top: 10px; }
+
+    .smart-steps {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0; margin-bottom: 18px; background: #fff;
+      border-radius: 8px; padding: 16px 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .smart-step { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
+    .smart-step-line { height: 2px; flex: 1; background: #ddd; margin-bottom: 16px; transition: background 0.4s; }
+    .smart-step-line.done { background: #ff9900; }
+    .ss-dot {
+      width: 28px; height: 28px; border-radius: 50%; background: #ddd;
+      border: 3px solid #ddd; transition: all 0.3s; display: flex; align-items: center; justify-content: center;
+    }
+    .smart-step.active .ss-dot { background: #fff3e0; border-color: #ff9900; box-shadow: 0 0 0 3px rgba(255,153,0,0.25); }
+    .smart-step.done .ss-dot { background: #ff9900; border-color: #ff9900; color: #fff; font-size: 0.75rem; font-weight: 900; content: "âœ“"; }
+    .ss-label { font-size: 0.72rem; color: #888; font-weight: 600; text-align: center; }
+    .smart-step.active .ss-label { color: #ff9900; }
+    .smart-step.done .ss-label { color: #2e7d32; }
+
+    .smart-error {
+      background: #fce8e6; border: 1.5px solid #d93025; border-radius: 8px;
+      padding: 14px 18px; color: #c62828; font-size: 0.88rem; margin-bottom: 16px;
+    }
+    .smart-card {
+      background: #fff; border-radius: 8px; padding: 20px 22px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.09); margin-bottom: 16px;
+    }
+    .smart-card-header {
+      font-size: 0.92rem; font-weight: 800; color: #131921;
+      border-bottom: 2px solid #ff9900; padding-bottom: 8px; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .smart-step-badge {
+      background: #ff9900; color: #131921; font-size: 0.75rem; font-weight: 900;
+      width: 22px; height: 22px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .smart-product-row { display: flex; gap: 16px; margin-bottom: 16px; align-items: flex-start; }
+    .smart-product-row img { width: 90px; height: 90px; object-fit: contain; border: 1px solid #eee; border-radius: 4px; flex-shrink: 0; background:#fafafa; }
+    .smart-asin-tag { display: inline-block; background: #131921; color: #ff9900; font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 4px; margin-bottom: 5px; letter-spacing: 1px; }
+    .smart-prod-title { font-size: 0.93rem; font-weight: 700; color: #131921; line-height: 1.4; margin-bottom: 4px; }
+    .smart-prod-brand, .smart-prod-cat { font-size: 0.78rem; color: #666; margin-top: 2px; }
+    .smart-price-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .smart-price-box { flex: 1; min-width: 110px; border-radius: 7px; padding: 12px 14px; text-align: center; }
+    .smart-price-box.supplier { background: #e3f2fd; }
+    .smart-price-box.amazon { background: #fff8e1; }
+    .smart-price-box.profit { background: #e6f4ea; }
+    .smart-price-box.loss { background: #fce8e6; }
+    .spb-label { font-size: 0.7rem; color: #666; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
+    .spb-value { font-size: 1.1rem; font-weight: 900; color: #131921; }
+    .smart-price-arrow { font-size: 1.2rem; color: #aaa; font-weight: 900; }
+    .sp-elig-auto { margin-bottom: 14px; }
+    .sp-elig-real-title { font-size: 0.82rem; font-weight: 700; color: #444; margin-bottom: 10px; }
+    .sp-elig-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .smart-calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .sc2-section-label { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 10px; }
+    .sc2-field { margin-bottom: 10px; }
+    .sc2-field label { display: block; font-size: 0.78rem; font-weight: 600; color: #555; margin-bottom: 4px; }
+    .smart-calc-result { background: #131921; border-radius: 8px; padding: 20px; }
+    .scr-verdict { font-size: 1.2rem; font-weight: 900; color: #ff9900; text-align: center; margin-bottom: 4px; }
+    .scr-verdict-sub { font-size: 0.82rem; color: #aaa; text-align: center; margin-bottom: 16px; }
+    .scr-breakdown { border-top: 1px solid #333; padding-top: 12px; }
+    .scr-row { display: flex; justify-content: space-between; font-size: 0.82rem; color: #ccc; padding: 4px 0; }
+    .scr-row.indent { padding-left: 12px; color: #888; }
+    .scr-row.total { font-size: 0.9rem; font-weight: 800; color: #fff; padding: 6px 0; }
+    .scr-green { color: #81c784; font-weight: 700; }
+    .scr-red { color: #ef9a9a; }
+    .scr-divider { border-top: 1px solid #444; margin: 6px 0; }
+    .scr-verdict-guide { margin-top: 14px; display: flex; flex-direction: column; gap: 4px; }
+    .scr-guide-row { font-size: 0.72rem; padding: 4px 8px; border-radius: 4px; font-weight: 600; }
+    .scr-guide-row.good { background: #1b5e20; color: #a5d6a7; }
+    .scr-guide-row.ok { background: #e65100; color: #ffcc80; }
+    .scr-guide-row.bad { background: #b71c1c; color: #ef9a9a; }
+    @media (max-width: 650px) {
+      .smart-url-row { flex-direction: column; }
+      .smart-calc-grid { grid-template-columns: 1fr; }
+      .smart-price-row { flex-direction: column; }
+    }
+
+    /* ======= SELLERAMP PANEL ======= */
+    .sa-score-row { display:flex; gap:20px; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
+    .sa-score-circle {
+      width:90px; height:90px; border-radius:50%; border:5px solid #ddd;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      flex-shrink:0; transition:border-color 0.3s;
+    }
+    .sa-score-circle.green  { border-color:#2e7d32; background:#e6f4ea; }
+    .sa-score-circle.yellow { border-color:#f9a825; background:#fff8e1; }
+    .sa-score-circle.red    { border-color:#c62828; background:#fce8e6; }
+    .sa-score-num { font-size:1.6rem; font-weight:900; line-height:1; color:#131921; }
+    .sa-score-label { font-size:0.65rem; font-weight:800; color:#888; letter-spacing:1px; }
+    .sa-score-details { flex:1; min-width:200px; }
+    .sa-verdict-big { font-size:1.1rem; font-weight:900; color:#131921; margin-bottom:4px; }
+    .sa-verdict-sub { font-size:0.82rem; color:#555; line-height:1.5; }
+
+    .sa-metrics-grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
+      gap:10px; margin-bottom:18px;
+    }
+    .sa-metric { background:#f8f8f8; border-radius:7px; padding:10px 12px; border-left:3px solid #ff9900; }
+    .sa-metric-label { font-size:0.68rem; color:#888; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:3px; }
+    .sa-metric-value { font-size:1rem; font-weight:900; color:#131921; }
+    .sa-metric-sub { font-size:0.7rem; color:#666; margin-top:2px; }
+
+    .sa-alerts-section { margin-bottom:18px; }
+    .sa-alerts-title { font-size:0.8rem; font-weight:800; color:#444; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:8px; }
+    .sa-alerts-grid { display:flex; flex-wrap:wrap; gap:8px; }
+    .sa-alert-tag {
+      padding:5px 12px; border-radius:20px; font-size:0.78rem; font-weight:700;
+      display:flex; align-items:center; gap:5px;
+    }
+    .sa-alert-tag.ok      { background:#e6f4ea; color:#1b5e20; border:1.5px solid #a5d6a7; }
+    .sa-alert-tag.warn    { background:#fff8e1; color:#e65100; border:1.5px solid #ffcc02; }
+    .sa-alert-tag.danger  { background:#fce8e6; color:#c62828; border:1.5px solid #f4a99a; }
+    .sa-alert-tag.neutral { background:#f3f3f3; color:#444; border:1.5px solid #ddd; }
+
+    .sa-section-label { font-size:0.8rem; font-weight:800; color:#444; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:10px; }
+    .sa-keepa-section { margin-bottom:18px; }
+    .sa-keepa-img { width:100%; max-width:700px; border-radius:6px; border:1px solid #eee; display:block; }
+    .sa-keepa-error { background:#f8f8f8; padding:10px 14px; border-radius:6px; font-size:0.82rem; color:#666; }
+    .sa-keepa-links { margin-top:8px; display:flex; gap:10px; flex-wrap:wrap; }
+
+    .sa-comp-section { margin-bottom:18px; }
+    .sa-comp-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px; }
+    .sa-comp-item { background:#f8f8f8; border-radius:7px; padding:10px 14px; }
+    .sa-comp-item-label { font-size:0.7rem; color:#888; font-weight:600; margin-bottom:3px; }
+    .sa-comp-item-val { font-size:0.9rem; font-weight:800; color:#131921; }
+
+    .sa-final-rec { border-radius:8px; padding:16px 18px; margin-top:4px; }
+    .sa-final-rec.buy  { background:#e6f4ea; border:2px solid #2e7d32; }
+    .sa-final-rec.eval { background:#fff8e1; border:2px solid #f9a825; }
+    .sa-final-rec.skip { background:#fce8e6; border:2px solid #c62828; }
+    .sa-final-title { font-size:1rem; font-weight:900; margin-bottom:8px; }
+    .sa-final-rec.buy  .sa-final-title { color:#1b5e20; }
+    .sa-final-rec.eval .sa-final-title { color:#e65100; }
+    .sa-final-rec.skip .sa-final-title { color:#c62828; }
+    .sa-final-items { font-size:0.82rem; color:#444; line-height:1.7; }
+    .sa-final-items li { margin-left:16px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <svg width="80" height="24" viewBox="0 0 110 34" fill="none">
+    <text x="0" y="26" font-family="Arial" font-size="28" font-weight="900" fill="#ff9900">amazon</text>
+  </svg>
+  <h1>Verificador de ASIN para Revendedores</h1>
+</header>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="showTab('smart')">Busca por Fornecedor</button>
+  <button class="tab-btn" onclick="showTab('asin')">Verificar ASIN</button>
+  <button class="tab-btn" onclick="showTab('suppliers')">Fornecedores</button>
+  <button class="tab-btn" onclick="showTab('prepcenters')">Prep Centers</button>
+  <button class="tab-btn" onclick="showTab('sellercental')">Seller Central</button>
+  <button class="tab-btn" onclick="showTab('tools')">Ferramentas</button>
+  <button class="tab-btn" onclick="showTab('calc')">Calculadora ROI</button>
+</nav>
+
+<div class="container">
+
+<!-- ======================== BUSCA INTELIGENTE (ABA PRINCIPAL) ======================== -->
+<div id="tab-smart" class="tab-panel active">
+
+  <!-- STEP 1: INPUT URL -->
+  <div class="smart-hero">
+    <div class="smart-hero-title">Cole a URL do produto no fornecedor</div>
+    <div class="smart-hero-sub">O site busca o produto na Amazon, verifica se pode vender e calcula as taxas automaticamente</div>
+    <div class="smart-url-row">
+      <input type="url" id="smartUrl" placeholder="https://www.walmart.com/ip/produto... ou qualquer fornecedor" />
+      <button id="smartBtn" onclick="runSmartSearch()">Analisar Produto</button>
+    </div>
+    <div class="smart-examples">
+      Exemplos: Walmart &bull; Target &bull; Walgreens &bull; Alibaba &bull; DHgate &bull; Costco
+    </div>
+  </div>
+
+  <!-- PROGRESS STEPS -->
+  <div class="smart-steps" id="smartSteps" style="display:none;">
+    <div class="smart-step" id="ss1">
+      <div class="ss-dot"></div>
+      <div class="ss-label">Buscando fornecedor</div>
+    </div>
+    <div class="smart-step-line"></div>
+    <div class="smart-step" id="ss2">
+      <div class="ss-dot"></div>
+      <div class="ss-label">Localizando na Amazon</div>
+    </div>
+    <div class="smart-step-line"></div>
+    <div class="smart-step" id="ss3">
+      <div class="ss-dot"></div>
+      <div class="ss-label">Verificando elegibilidade</div>
+    </div>
+    <div class="smart-step-line"></div>
+    <div class="smart-step" id="ss4">
+      <div class="ss-dot"></div>
+      <div class="ss-label">Calculando taxas</div>
+    </div>
+  </div>
+
+  <div id="smartError" class="smart-error" style="display:none;"></div>
+
+  <!-- MANUAL FALLBACK (site com anti-bot) -->
+  <div id="manualFallback" style="display:none; background:#1a2744; border:1px solid #ff9900; border-radius:10px; padding:18px; margin-top:14px;">
+    <div style="color:#ff9900; font-weight:700; font-size:15px; margin-bottom:8px;">&#9888; Site protegido â€” insira os dados manualmente</div>
+    <div style="color:#b0bec5; font-size:13px; margin-bottom:14px;">O site do fornecedor bloqueou o acesso automÃ¡tico. Copie o nome e o preÃ§o do produto e cole abaixo para continuar a anÃ¡lise.</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+      <div>
+        <label style="color:#90caf9; font-size:12px; display:block; margin-bottom:4px;">Nome / DescriÃ§Ã£o do produto</label>
+        <input id="mf_name" type="text" placeholder="Ex: Waterpik Aquarius WP-660" style="width:100%; padding:8px; border-radius:6px; border:1px solid #37474f; background:#0d1b2e; color:#e0e0e0; font-size:13px;" />
+      </div>
+      <div>
+        <label style="color:#90caf9; font-size:12px; display:block; margin-bottom:4px;">PreÃ§o no fornecedor (USD)</label>
+        <input id="mf_price" type="number" step="0.01" placeholder="Ex: 49.99" style="width:100%; padding:8px; border-radius:6px; border:1px solid #37474f; background:#0d1b2e; color:#e0e0e0; font-size:13px;" />
+      </div>
+    </div>
+    <button onclick="runManualSearch()" style="background:#ff9900; color:#000; border:none; padding:9px 22px; border-radius:6px; font-weight:700; cursor:pointer; font-size:14px;">Buscar na Amazon &rarr;</button>
+  </div>
+
+  <!-- RESULT PANEL -->
+  <div id="smartResult" style="display:none;">
+
+    <!-- PRODUTO -->
+    <div class="smart-card">
+      <div class="smart-card-header">
+        <span class="smart-step-badge">1</span> Produto Encontrado
+      </div>
+      <div class="smart-product-row">
+        <img id="sp_img" src="" alt="" onerror="this.style.display='none'" />
+        <div class="smart-product-info">
+          <div class="smart-asin-tag" id="sp_asin"></div>
+          <div class="smart-prod-title" id="sp_title"></div>
+          <div class="smart-prod-brand" id="sp_brand"></div>
+          <div class="smart-prod-cat" id="sp_category"></div>
+        </div>
+      </div>
+      <div class="smart-price-row">
+        <div class="smart-price-box supplier">
+          <div class="spb-label">Preco no Fornecedor</div>
+          <div class="spb-value" id="sp_supplier_price">â€”</div>
+        </div>
+        <div class="smart-price-arrow">â†’</div>
+        <div class="smart-price-box amazon">
+          <div class="spb-label">Preco na Amazon</div>
+          <div class="spb-value" id="sp_amz_price">â€”</div>
+        </div>
+        <div class="smart-price-arrow">â†’</div>
+        <div class="smart-price-box profit" id="sp_profit_box">
+          <div class="spb-label">Lucro Estimado</div>
+          <div class="spb-value" id="sp_profit_est">â€”</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ELEGIBILIDADE -->
+    <div class="smart-card">
+      <div class="smart-card-header">
+        <span class="smart-step-badge">2</span> Elegibilidade para Venda
+      </div>
+      <div id="sp_elig_auto" class="sp-elig-auto"></div>
+      <div class="sp-elig-real">
+        <div class="sp-elig-real-title">Verificar na SUA conta Amazon (resultado real):</div>
+        <div class="sp-elig-btns">
+          <a id="sp_btn_restrict" href="#" target="_blank" class="btn btn-primary">Verificar Restricoes</a>
+          <a id="sp_btn_add" href="#" target="_blank" class="btn btn-real">Tentar Listar Produto</a>
+          <a id="sp_btn_amz" href="#" target="_blank" class="btn btn-secondary">Ver na Amazon</a>
+        </div>
+        <div class="sc-direct-guide" style="margin-top:10px;">
+          <div class="sc-guide-step"><span class="sc-guide-num">1</span> Clique em <strong>"Verificar Restricoes"</strong></div>
+          <div class="sc-guide-step"><span class="sc-guide-num">2</span> <strong style="color:#2e7d32">"Vender este produto"</strong> = pode vender livre</div>
+          <div class="sc-guide-step"><span class="sc-guide-num">3</span> <strong style="color:#e65100">"Solicitar aprovacao"</strong> = precisa de aprovacao</div>
+          <div class="sc-guide-step"><span class="sc-guide-num">4</span> <strong style="color:#c62828">"Nao elegivel"</strong> = produto bloqueado</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALCULADORA INLINE -->
+    <div class="smart-card">
+      <div class="smart-card-header">
+        <span class="smart-step-badge">3</span> Calculadora de Taxas e Viabilidade
+      </div>
+
+      <div class="smart-calc-grid">
+        <!-- ENTRADAS -->
+        <div class="smart-calc-inputs">
+          <div class="sc2-section-label">Seus Custos</div>
+          <div class="sc2-field">
+            <label>Preco de compra (fornecedor)</label>
+            <div class="calc-input-row"><span class="calc-prefix">$</span><input type="number" id="sc2_cogs" value="0" step="0.01" oninput="calcSmart()" /></div>
+          </div>
+          <div class="sc2-field">
+            <label>Frete ao prep center</label>
+            <div class="calc-input-row"><span class="calc-prefix">$</span><input type="number" id="sc2_freight" value="1.00" step="0.01" oninput="calcSmart()" /></div>
+          </div>
+          <div class="sc2-field">
+            <label>Custo prep center / unidade</label>
+            <div class="calc-input-row"><span class="calc-prefix">$</span><input type="number" id="sc2_prep" value="0.50" step="0.01" oninput="calcSmart()" /></div>
+          </div>
+          <div class="sc2-field">
+            <label>Frete prep â†’ FBA</label>
+            <div class="calc-input-row"><span class="calc-prefix">$</span><input type="number" id="sc2_inbound" value="0.36" step="0.01" oninput="calcSmart()" /></div>
+          </div>
+
+          <div class="sc2-section-label" style="margin-top:14px;">Taxas Amazon</div>
+          <div class="sc2-field">
+            <label>Preco de venda na Amazon</label>
+            <div class="calc-input-row"><span class="calc-prefix">$</span><input type="number" id="sc2_price" value="0" step="0.01" oninput="calcSmart()" /></div>
+          </div>
+          <div class="sc2-field">
+            <label>Taxa referral (%)</label>
+            <div class="calc-input-row"><input type="number" id="sc2_ref" value="15" step="0.5" oninput="calcSmart()" /><span class="calc-suffix">%</span></div>
+          </div>
+          <div class="sc2-field">
+            <label>Taxa FBA / unidade</label>
+            <div class="calc-input-row"><span class="calc-prefix">$</span><input type="number" id="sc2_fba" value="3.22" step="0.01" oninput="calcSmart()" /></div>
+          </div>
+        </div>
+
+        <!-- RESULTADO -->
+        <div class="smart-calc-result">
+          <div class="scr-verdict" id="scr_verdict">â€”</div>
+          <div class="scr-verdict-sub" id="scr_sub"></div>
+
+          <div class="scr-breakdown">
+            <div class="scr-row"><span>Preco de venda</span><span class="scr-green" id="scr_price">â€”</span></div>
+            <div class="scr-row indent"><span>(-) Referral fee</span><span class="scr-red" id="scr_ref">â€”</span></div>
+            <div class="scr-row indent"><span>(-) Taxa FBA</span><span class="scr-red" id="scr_fba">â€”</span></div>
+            <div class="scr-row indent"><span>(-) Custo produto</span><span class="scr-red" id="scr_cogs">â€”</span></div>
+            <div class="scr-row indent"><span>(-) Frete + Prep</span><span class="scr-red" id="scr_logistics">â€”</span></div>
+            <div class="scr-divider"></div>
+            <div class="scr-row total"><span>LUCRO LIQUIDO</span><span id="scr_profit">â€”</span></div>
+            <div class="scr-row total"><span>MARGEM</span><span id="scr_margin">â€”</span></div>
+            <div class="scr-row total"><span>ROI</span><span id="scr_roi">â€”</span></div>
+          </div>
+
+          <div class="scr-verdict-guide">
+            <div class="scr-guide-row good">ROI &ge; 30% + Margem &ge; 15% = COMPRAR</div>
+            <div class="scr-guide-row ok">ROI 15-29% = AVALIAR RISCO</div>
+            <div class="scr-guide-row bad">ROI &lt; 15% = NAO COMPRAR</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SELLERAMP-STYLE ANALYSIS PANEL -->
+    <div class="smart-card" id="sa_panel" style="display:none;">
+      <div class="smart-card-header">
+        <span class="smart-step-badge">4</span> Analise Completa do Produto (estilo SellerAmp)
+      </div>
+
+      <!-- DEAL SCORE -->
+      <div class="sa-score-row">
+        <div class="sa-score-circle" id="sa_score_circle">
+          <div class="sa-score-num" id="sa_score_num">--</div>
+          <div class="sa-score-label">SCORE</div>
+        </div>
+        <div class="sa-score-details">
+          <div class="sa-verdict-big" id="sa_verdict_big">Analisando...</div>
+          <div class="sa-verdict-sub" id="sa_verdict_sub"></div>
+          <div class="sa-alerts" id="sa_alerts"></div>
+        </div>
+      </div>
+
+      <!-- METRICAS GRID -->
+      <div class="sa-metrics-grid">
+        <div class="sa-metric">
+          <div class="sa-metric-label">BSR Atual</div>
+          <div class="sa-metric-value" id="sa_bsr">â€”</div>
+          <div class="sa-metric-sub" id="sa_bsr_cat"></div>
+        </div>
+        <div class="sa-metric">
+          <div class="sa-metric-label">Vendas Est./Mes</div>
+          <div class="sa-metric-value" id="sa_sales_est">â€”</div>
+          <div class="sa-metric-sub">baseado no BSR</div>
+        </div>
+        <div class="sa-metric">
+          <div class="sa-metric-label">Avaliacoes</div>
+          <div class="sa-metric-value" id="sa_reviews">â€”</div>
+          <div class="sa-metric-sub" id="sa_rating">â€”</div>
+        </div>
+        <div class="sa-metric">
+          <div class="sa-metric-label">Competicao</div>
+          <div class="sa-metric-value" id="sa_competition">â€”</div>
+          <div class="sa-metric-sub" id="sa_competition_sub"></div>
+        </div>
+        <div class="sa-metric">
+          <div class="sa-metric-label">Buy Box Price</div>
+          <div class="sa-metric-value" id="sa_buybox">â€”</div>
+          <div class="sa-metric-sub" id="sa_buybox_sub"></div>
+        </div>
+        <div class="sa-metric">
+          <div class="sa-metric-label">Tier FBA</div>
+          <div class="sa-metric-value" id="sa_tier">â€”</div>
+          <div class="sa-metric-sub" id="sa_fba_fee_est">â€”</div>
+        </div>
+      </div>
+
+      <!-- ALERTAS IP / HAZMAT -->
+      <div class="sa-alerts-section" id="sa_alerts_section">
+        <div class="sa-alerts-title">Alertas de Conformidade</div>
+        <div class="sa-alerts-grid" id="sa_alerts_grid"></div>
+      </div>
+
+      <!-- HISTORICO DE PRECO (KEEPA) -->
+      <div class="sa-keepa-section">
+        <div class="sa-section-label">Historico de Preco â€” Keepa (90 dias)</div>
+        <img id="sa_keepa_chart" src="" alt="Keepa price chart" class="sa-keepa-img" onerror="this.parentElement.innerHTML='<div class=sa-keepa-error>Grafico Keepa indisponivel â€” <a href=https://keepa.com target=_blank>ver no Keepa</a></div>'" />
+        <div class="sa-keepa-links" id="sa_keepa_links"></div>
+      </div>
+
+      <!-- ANALISE DE COMPETIDORES -->
+      <div class="sa-comp-section">
+        <div class="sa-section-label">Analise de Competicao</div>
+        <div class="sa-comp-grid" id="sa_comp_grid"></div>
+      </div>
+
+      <!-- RECOMENDACAO FINAL -->
+      <div class="sa-final-rec" id="sa_final_rec">
+        <div class="sa-final-title" id="sa_final_title"></div>
+        <div class="sa-final-items" id="sa_final_items"></div>
+      </div>
+
+    </div><!-- /sa_panel -->
+
+  </div><!-- /smartResult -->
+</div><!-- /tab-smart -->
+
+<div id="tab-asin" class="tab-panel">
+
+  <!-- CONFIG SP-API BANNER -->
+  <div class="api-config-banner" id="apiConfigBanner">
+    <div class="api-config-banner-text">
+      <strong>Verificacao real no seu cadastro Amazon desativada.</strong>
+      Configure suas credenciais SP-API para checar elegibilidade diretamente na sua conta de vendedor.
+    </div>
+    <button class="api-config-open-btn" onclick="toggleApiConfig()">Configurar Acesso</button>
+  </div>
+  <div class="api-config-banner api-config-ok" id="apiConfigBannerOk" style="display:none;">
+    <div class="api-config-banner-text">
+      Acesso SP-API configurado. A verificacao real no seu cadastro esta ativa.
+    </div>
+    <button class="api-config-open-btn" style="background:#fff;color:#1b5e20;" onclick="toggleApiConfig()">Editar</button>
+  </div>
+
+  <!-- PAINEL DE CONFIGURACAO SP-API -->
+  <div class="api-config-panel" id="apiConfigPanel" style="display:none;">
+    <div class="api-config-title">
+      Configuracao de Acesso SP-API (Amazon Selling Partner API)
+      <button class="api-config-close" onclick="toggleApiConfig()">Fechar</button>
+    </div>
+    <div class="api-config-desc">
+      Para verificar a elegibilidade real de produtos na <strong>sua</strong> conta de vendedor, o site precisa de acesso via SP-API.
+      Suas credenciais ficam salvas <strong>apenas no seu navegador</strong> (localStorage) â€” nunca sao enviadas a terceiros.
+    </div>
+
+    <div class="api-config-steps">
+      <div class="api-step">
+        <div class="api-step-num">1</div>
+        <div>
+          <strong>Crie um aplicativo SP-API</strong> em
+          <a href="https://sellercentral.amazon.com/apps/manage" target="_blank">Seller Central &gt; Aplicativos &gt; Desenvolver Apps</a>.
+          Tipo: <em>Privado</em>.
+        </div>
+      </div>
+      <div class="api-step">
+        <div class="api-step-num">2</div>
+        <div>
+          Autorize o app para sua conta e copie o <strong>Refresh Token</strong> gerado.
+        </div>
+      </div>
+      <div class="api-step">
+        <div class="api-step-num">3</div>
+        <div>
+          Crie um usuario IAM na AWS com permissao <em>SellingPartnerAPI</em> e copie o <strong>Access Key</strong> e <strong>Secret Key</strong>.
+        </div>
+      </div>
+    </div>
+
+    <div class="api-fields-grid">
+      <div class="api-field">
+        <label>LWA Client ID</label>
+        <input type="text" id="cfg_client_id" placeholder="amzn1.application-oa2-client.xxx" />
+      </div>
+      <div class="api-field">
+        <label>LWA Client Secret</label>
+        <input type="password" id="cfg_client_secret" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" />
+      </div>
+      <div class="api-field">
+        <label>LWA Refresh Token</label>
+        <input type="password" id="cfg_refresh_token" placeholder="Atzr|xxx..." />
+      </div>
+      <div class="api-field">
+        <label>AWS Access Key ID</label>
+        <input type="text" id="cfg_aws_key" placeholder="AKIAIOSFODNN7EXAMPLE" />
+      </div>
+      <div class="api-field">
+        <label>AWS Secret Access Key</label>
+        <input type="password" id="cfg_aws_secret" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" />
+      </div>
+      <div class="api-field">
+        <label>Seller ID (Merchant Token)</label>
+        <input type="text" id="cfg_seller_id" placeholder="A1B2C3D4E5F6G7" />
+        <span class="api-field-hint">Seller Central &gt; Configuracoes &gt; Informacoes da conta</span>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">
+      <button class="btn btn-primary" onclick="saveApiConfig()">Salvar Credenciais</button>
+      <button class="btn btn-outline" onclick="clearApiConfig()">Limpar</button>
+    </div>
+    <div id="apiConfigMsg" style="margin-top:10px;font-size:0.83rem;"></div>
+  </div>
+
+  <div class="search-box">
+    <h2>Buscar produto por ASIN</h2>
+    <div class="input-row">
+      <input type="text" id="asinInput" placeholder="Ex: B08N5WRWNW" maxlength="10" />
+      <button id="searchBtn" onclick="searchASIN()">Verificar</button>
+    </div>
+    <p class="hint">O ASIN Ã© o identificador de 10 caracteres do produto na Amazon (ex: B08N5WRWNW). Encontre-o na URL da pÃ¡gina do produto ou em <strong>Seller Central &gt; Adicionar Produto</strong>.</p>
+  </div>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p>Buscando informaÃ§Ãµes do produto...</p>
+  </div>
+
+  <div class="error-box" id="errorBox"></div>
+
+  <div id="result">
+    <div class="product-card">
+      <div class="product-header">
+        <img id="prodImg" src="" alt="Imagem do produto" onerror="this.src='https://via.placeholder.com/120x120?text=Sem+Imagem'" />
+        <div class="info">
+          <span class="asin-tag" id="prodAsin"></span>
+          <h3 id="prodTitle">-</h3>
+          <div id="prodBrand" style="font-size:0.85rem;color:#555;margin-top:4px;"></div>
+        </div>
+      </div>
+
+      <div class="meta-grid">
+        <div class="meta-item">
+          <div class="label">Categoria</div>
+          <div class="value" id="prodCategory">-</div>
+        </div>
+        <div class="meta-item">
+          <div class="label">Preco (amazon.com)</div>
+          <div class="value" id="prodPrice">-</div>
+        </div>
+        <div class="meta-item">
+          <div class="label">Classificacao BSR</div>
+          <div class="value" id="prodRank">-</div>
+        </div>
+        <div class="meta-item">
+          <div class="label">Avaliacao</div>
+          <div class="value" id="prodRating">-</div>
+        </div>
+      </div>
+
+      <div class="eligibility-box" id="eligibilityBox">
+        <h4><span class="status-icon" id="eligIcon"></span> <span id="eligTitle"></span></h4>
+        <ul id="eligDetails"></ul>
+      </div>
+
+      <!-- VERIFICACAO NA CONTA (SP-API ou link direto) -->
+      <div class="real-elig-box" id="realEligBox" style="display:none;">
+        <div class="real-elig-header">
+          <span class="real-elig-badge">VERIFICACAO NA SUA CONTA</span>
+          Disponibilidade real para venda
+        </div>
+        <div id="realEligContent" class="real-elig-loading">Carregando...</div>
+      </div>
+
+      <div class="actions">
+        <a id="btnSellerCentral" href="#" target="_blank" class="btn btn-primary">Verificar no Seller Central</a>
+        <a id="btnAmazonPage" href="#" target="_blank" class="btn btn-secondary">Ver na Amazon.com</a>
+        <a id="btnAddProduct" href="#" target="_blank" class="btn btn-outline">Adicionar como Produto</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="history-section" id="historySection" style="display:none;">
+    <h3>Buscas recentes</h3>
+    <div class="history-list" id="historyList"></div>
+    <button class="clear-history" onclick="clearHistory()">Limpar historico</button>
+  </div>
+
+  <div class="restricted-categories">
+    <h3>Referencia rapida: Categorias na Amazon.com (vendedores terceiros)</h3>
+    <div class="cat-grid">
+      <span class="cat-tag free">Eletronicos</span>
+      <span class="cat-tag free">Casa & Cozinha</span>
+      <span class="cat-tag free">Esportes</span>
+      <span class="cat-tag free">Ferramentas</span>
+      <span class="cat-tag free">Brinquedos</span>
+      <span class="cat-tag free">Livros</span>
+      <span class="cat-tag free">Informatica</span>
+      <span class="cat-tag approval">Joias</span>
+      <span class="cat-tag approval">Automoveis e Pecas</span>
+      <span class="cat-tag approval">Musica</span>
+      <span class="cat-tag approval">Roupas & Acessorios</span>
+      <span class="cat-tag approval">Calcados</span>
+      <span class="cat-tag approval">Relogios</span>
+      <span class="cat-tag approval">Beleza</span>
+      <span class="cat-tag approval">Saude & Cuidados Pessoais</span>
+      <span class="cat-tag restricted">Alimentos & Bebidas</span>
+      <span class="cat-tag restricted">Armas e Municoes</span>
+      <span class="cat-tag restricted">Produtos Perigosos</span>
+      <span class="cat-tag restricted">Medicamentos</span>
+      <span class="cat-tag restricted">Alcool</span>
+      <span class="cat-tag restricted">Tabaco</span>
+    </div>
+    <p style="margin-top:12px;font-size:0.78rem;color:#666;">
+      <span style="color:#1b5e20;font-weight:700;">Verde</span> = Venda livre &nbsp;|&nbsp;
+      <span style="color:#e65100;font-weight:700;">Amarelo</span> = Aprovacao necessaria &nbsp;|&nbsp;
+      <span style="color:#c62828;font-weight:700;">Vermelho</span> = Restrito / proibido para a maioria dos vendedores
+    </p>
+  </div>
+
+</div><!-- /tab-asin -->
+
+<!-- ======================== FORNECEDORES ======================== -->
+<div id="tab-suppliers" class="tab-panel">
+
+  <div class="product-card" style="margin-bottom:18px;">
+    <div class="section-title">Melhores Fornecedores para Revendedores Amazon</div>
+
+    <div class="filter-bar" id="supplierFilters">
+      <button class="filter-btn active" onclick="filterSuppliers('all',this)">Todos</button>
+      <button class="filter-btn" onclick="filterSuppliers('china',this)">China / Import</button>
+      <button class="filter-btn" onclick="filterSuppliers('usa',this)">Wholesale USA</button>
+      <button class="filter-btn" onclick="filterSuppliers('liquidation',this)">Liquidacao</button>
+      <button class="filter-btn" onclick="filterSuppliers('directory',this)">Diretorios</button>
+      <button class="filter-btn" onclick="filterSuppliers('br-rec',this)">Rec. p/ Brasileiros</button>
+    </div>
+
+    <div class="cards-grid" id="suppliersGrid"></div>
+  </div>
+
+</div><!-- /tab-suppliers -->
+
+<!-- ======================== PREP CENTERS ======================== -->
+<div id="tab-prepcenters" class="tab-panel">
+
+  <div class="product-card" style="margin-bottom:18px;">
+    <div class="section-title">Melhores Prep Centers para FBA</div>
+
+    <div class="filter-bar" id="prepFilters">
+      <button class="filter-btn active" onclick="filterPrep('all',this)">Todos</button>
+      <button class="filter-btn" onclick="filterPrep('intl',this)">Aceita Internacionais</button>
+      <button class="filter-btn" onclick="filterPrep('cheap',this)">Melhor Custo</button>
+      <button class="filter-btn" onclick="filterPrep('full',this)">Servico Completo</button>
+    </div>
+
+    <div class="cards-grid" id="prepGrid"></div>
+  </div>
+
+</div><!-- /tab-prepcenters -->
+
+<!-- ======================== SELLER CENTRAL ======================== -->
+<div id="tab-sellercental" class="tab-panel">
+
+  <div class="product-card" style="margin-bottom:18px;">
+    <div class="section-title">Guia da Pagina Inicial do Seller Central</div>
+    <p style="font-size:0.88rem;color:#555;margin-bottom:20px;">
+      A pagina inicial do Seller Central e o ponto central que reune metricas de desempenho e acoes para monitorar, gerenciar e expandir seu negocio nas lojas da Amazon.
+      Ela se adapta a voce, destacando as informacoes mais importantes e as tarefas a serem realizadas em cada etapa do ciclo de vida do vendedor.
+    </p>
+
+    <a href="https://sellercentral.amazon.com/home" target="_blank" class="btn btn-primary" style="margin-bottom:24px;display:inline-block;">
+      Abrir Seller Central
+    </a>
+
+    <!-- KPI -->
+    <div class="sc-section">
+      <div class="sc-section-header">
+        <span class="sc-icon" style="background:#1565c0;">KPI</span>
+        <h3>Indicadores-Chave de Desempenho (KPI)</h3>
+      </div>
+      <p class="sc-desc">
+        Metricas mensuraveis para avaliar o desempenho e o sucesso do seu negocio. Fornecem informacoes sobre as operacoes da sua empresa, ajudando a avaliar progresso e tomar decisoes baseadas em dados.
+      </p>
+      <div class="sc-tip-grid">
+        <div class="sc-tip">
+          <div class="sc-tip-title">Multiplas lojas</div>
+          <div class="sc-tip-text">Se voce vende em 2 ou mais lojas, clique em um cartao de KPI para ver detalhamento por loja, com filtros de tempo e moeda.</div>
+        </div>
+        <div class="sc-tip">
+          <div class="sc-tip-title">Atualizacao</div>
+          <div class="sc-tip-text">A maioria dos indicadores e atualizada ao recarregar a pagina, mas algumas atualizacoes podem levar ate 1 hora.</div>
+        </div>
+        <div class="sc-tip">
+          <div class="sc-tip-title">Aviso sobre moedas</div>
+          <div class="sc-tip-text">Taxas de cambio sao apenas informativas. Valores estimados de vendas podem nao refletir impostos ou taxas aplicaveis.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACOES -->
+    <div class="sc-section">
+      <div class="sc-section-header">
+        <span class="sc-icon" style="background:#2e7d32;">ACOES</span>
+        <h3>Acoes â€” Alertas e Atividades Pendentes</h3>
+      </div>
+      <p class="sc-desc">Acompanhe atividades e alertas cruciais para a saude do seu negocio e catalogo. Resolva alertas, gerencie pedidos e rastreie remessas de forma integrada.</p>
+      <div class="sc-action-list">
+        <div class="sc-action-item sc-red">
+          <div class="sc-action-label">Alerta Vermelho</div>
+          <div class="sc-action-text">Comunicacoes importantes sobre o status da conta â€” suspensao, desativacao, disponibilidade. <strong>Prioridade maxima.</strong></div>
+        </div>
+        <div class="sc-action-item sc-yellow">
+          <div class="sc-action-label">Alerta Amarelo</div>
+          <div class="sc-action-text">Avisos sobre possiveis riscos â€” risco de suspensao, desativacao, impactos significativos no produto. Aja rapidamente para evitar escalonamento.</div>
+        </div>
+        <div class="sc-action-item sc-blue">
+          <div class="sc-action-label">Acoes Gerais</div>
+          <div class="sc-action-text">Atividades pendentes ou futuras: problemas de envio pendentes, solicitacoes de devolucao em aberto, estoque FBA a repor, SLAs de compradores.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECOMENDACOES -->
+    <div class="sc-section">
+      <div class="sc-section-header">
+        <span class="sc-icon" style="background:#6a1b9a;">REC</span>
+        <h3>Recomendacoes Personalizadas</h3>
+      </div>
+      <p class="sc-desc">
+        Localizadas abaixo das Acoes, as recomendacoes sao personalizadas para voce com acoes opcionais para acelerar o crescimento: melhorar anuncios, aumentar vendas e aprimorar a satisfacao do cliente.
+      </p>
+      <div class="sc-tip-grid">
+        <div class="sc-tip">
+          <div class="sc-tip-title">Impacto em anuncios</div>
+          <div class="sc-tip-text">Sugestoes para otimizar titulos, imagens, bullet points e A+ Content dos seus produtos.</div>
+        </div>
+        <div class="sc-tip">
+          <div class="sc-tip-title">Aumentar vendas</div>
+          <div class="sc-tip-text">Recomendacoes de promocoes, cupons, deals e campanhas de publicidade (PPC/Sponsored Products).</div>
+        </div>
+        <div class="sc-tip">
+          <div class="sc-tip-title">Satisfacao do cliente</div>
+          <div class="sc-tip-text">Alertas sobre feedback negativo, perguntas sem resposta e taxas de defeito em pedidos.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMUNICACOES -->
+    <div class="sc-section">
+      <div class="sc-section-header">
+        <span class="sc-icon" style="background:#e65100;">COM</span>
+        <h3>Comunicacoes</h3>
+      </div>
+      <p class="sc-desc">
+        Mantenha-se informado sobre as ultimas noticias e discussoes da comunidade atraves de dois canais principais:
+      </p>
+      <div class="sc-tip-grid">
+        <div class="sc-tip">
+          <div class="sc-tip-title">Forums de Vendedores</div>
+          <div class="sc-tip-text">Discussoes com outros vendedores, dicas, alertas sobre mudancas de politicas e resolucao de problemas coletivos.</div>
+        </div>
+        <div class="sc-tip">
+          <div class="sc-tip-title">Noticias do Vendedor</div>
+          <div class="sc-tip-text">Atualizacoes oficiais da Amazon: novas politicas, mudancas de taxas, novos programas e comunicados importantes.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARTOES OCULTOS + FEEDBACK -->
+    <div class="sc-section">
+      <div class="sc-section-header">
+        <span class="sc-icon" style="background:#546e7a;">MAIS</span>
+        <h3>Cartoes Ocultos e Feedback</h3>
+      </div>
+      <div class="sc-tip-grid">
+        <div class="sc-tip">
+          <div class="sc-tip-title">Ocultar cartoes</div>
+          <div class="sc-tip-text">Clique em "..." em qualquer cartao de Recomendacao ou Comunicacao para ocultÃ¡-lo. Cartoes ocultos ficam acessiveis na Secao Oculta.</div>
+        </div>
+        <div class="sc-tip">
+          <div class="sc-tip-title">Feedback</div>
+          <div class="sc-tip-text">Avalie sua experiencia com estrelas, selecione categoria (impreciso, incompleto, sugestao) e adicione comentarios para melhorar o painel.</div>
+        </div>
+        <div class="sc-tip">
+          <div class="sc-tip-title">Cartao temporario</div>
+          <div class="sc-tip-text">Se aparecer "Ocultar temporariamente", o cartao nao pode ser ocultado permanentemente â€” ele retornara apos 7 dias automaticamente.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LINKS RAPIDOS -->
+    <div class="sc-section">
+      <div class="sc-section-header">
+        <span class="sc-icon" style="background:#ff9900;color:#131921;">LINK</span>
+        <h3>Atalhos Rapidos no Seller Central</h3>
+      </div>
+      <div class="sc-links-grid">
+        <a href="https://sellercentral.amazon.com/home" target="_blank" class="sc-link-card">
+          <div class="sc-link-title">Pagina Inicial</div>
+          <div class="sc-link-sub">Dashboard principal</div>
+        </a>
+        <a href="https://sellercentral.amazon.com/product-search/keywords?ref=xx_catadd_dnav_xx" target="_blank" class="sc-link-card">
+          <div class="sc-link-title">Adicionar Produto</div>
+          <div class="sc-link-sub">Buscar por ASIN ou palavra-chave</div>
+        </a>
+        <a href="https://sellercentral.amazon.com/inventory" target="_blank" class="sc-link-card">
+          <div class="sc-link-title">Gerenciar Estoque</div>
+          <div class="sc-link-sub">Ver e editar seus anuncios</div>
+        </a>
+        <a href="https://sellercentral.amazon.com/orders-v3/ref=xx_myo_dnav_xx" target="_blank" class="sc-link-card">
+          <div class="sc-link-title">Gerenciar Pedidos</div>
+          <div class="sc-link-sub">Pedidos pendentes e historico</div>
+        </a>
+        <a href="https://sellercentral.amazon.com/performance/dashboard" target="_blank" class="sc-link-card">
+          <div class="sc-link-title">Saude da Conta</div>
+          <div class="sc-link-sub">Metricas e conformidade</div>
+        </a>
+        <a href="https://sellercentral.amazon.com/reimbursements" target="_blank" class="sc-link-card">
+          <div class="sc-link-title">Reembolsos FBA</div>
+          <div class="sc-link-sub">Itens perdidos/danificados</div>
+        </a>
+        <a href="https://sellercentral.amazon.com/catalog/ref=xx_addlisting_dnav_xx" target="_blank" class="sc-link-card">
+          <div class="sc-link-title">Catalogo</div>
+          <div class="sc-link-sub">Restricoes e aprovacoes</div>
+        </a>
+        <a href="https://sellercentral.amazon.com/fba/profitabilitycalculator/index" target="_blank" class="sc-link-card">
+          <div class="sc-link-title">Calculadora FBA</div>
+          <div class="sc-link-sub">Estimar custos e margem</div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /tab-sellercental -->
+
+<!-- ======================== FERRAMENTAS ======================== -->
+<div id="tab-tools" class="tab-panel">
+  <div class="product-card" style="margin-bottom:18px;">
+    <div class="section-title">Extensoes e Ferramentas Pagas para Vendedores Amazon</div>
+    <p style="font-size:0.88rem;color:#555;margin-bottom:20px;">
+      Comparativo das principais ferramentas usadas por vendedores profissionais para pesquisa de produto, analise de lucratividade e sourcing. Ordenadas por melhor custo-beneficio para RA/OA/Wholesale.
+    </p>
+
+    <div class="filter-bar" id="toolsFilters">
+      <button class="filter-btn active" onclick="filterTools('all',this)">Todas</button>
+      <button class="filter-btn" onclick="filterTools('ext',this)">Extensao Chrome</button>
+      <button class="filter-btn" onclick="filterTools('free',this)">Tem plano gratuito</button>
+      <button class="filter-btn" onclick="filterTools('oa',this)">OA / RA / Wholesale</button>
+      <button class="filter-btn" onclick="filterTools('pl',this)">Private Label</button>
+    </div>
+
+    <div class="cards-grid" id="toolsGrid"></div>
+  </div>
+</div><!-- /tab-tools -->
+
+<!-- ======================== CALCULADORA ROI ======================== -->
+<div id="tab-calc" class="tab-panel">
+
+  <!-- BUSCA INTELIGENTE POR URL -->
+  <div class="url-search-box">
+    <div class="url-search-title">Busca Inteligente por URL do Fornecedor</div>
+    <p class="url-search-desc">Cole a URL de um produto em qualquer site fornecedor (Walgreens, Target, Walmart, Alibaba, etc.). O sistema busca o produto na Amazon, identifica o ASIN e preenche a calculadora automaticamente.</p>
+
+    <div class="url-input-row">
+      <input type="url" id="supplierUrl" placeholder="https://www.walgreens.com/store/c/produto/ID=..." />
+      <button id="urlSearchBtn" onclick="searchByURL()">Buscar</button>
+    </div>
+
+    <div class="url-status" id="urlStatus" style="display:none;"></div>
+
+    <div class="url-result" id="urlResult" style="display:none;">
+      <div class="url-result-grid">
+        <div class="url-result-item">
+          <div class="url-result-label">Produto (fornecedor)</div>
+          <div class="url-result-value" id="ur_title">-</div>
+        </div>
+        <div class="url-result-item">
+          <div class="url-result-label">Preco no fornecedor</div>
+          <div class="url-result-value" id="ur_supplier_price" style="color:#1565c0;font-weight:800;">-</div>
+        </div>
+        <div class="url-result-item">
+          <div class="url-result-label">ASIN encontrado</div>
+          <div class="url-result-value" id="ur_asin" style="color:#ff9900;font-weight:800;">-</div>
+        </div>
+        <div class="url-result-item">
+          <div class="url-result-label">Preco na Amazon</div>
+          <div class="url-result-value" id="ur_amz_price" style="color:#2e7d32;font-weight:800;">-</div>
+        </div>
+        <div class="url-result-item">
+          <div class="url-result-label">Categoria</div>
+          <div class="url-result-value" id="ur_category">-</div>
+        </div>
+        <div class="url-result-item">
+          <div class="url-result-label">BSR / Avaliacao</div>
+          <div class="url-result-value" id="ur_bsr">-</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+        <button class="btn btn-primary" onclick="fillCalcFromSearch()">Preencher Calculadora</button>
+        <a id="ur_amz_link" href="#" target="_blank" class="btn btn-secondary">Ver na Amazon</a>
+        <a id="ur_sc_link" href="#" target="_blank" class="btn btn-outline">Verificar no Seller Central</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="calc-wrapper">
+
+    <!-- COLUNA ESQUERDA: ENTRADAS -->
+    <div class="calc-col">
+
+      <div class="calc-card">
+        <div class="calc-card-title">Receita</div>
+
+        <div class="calc-field">
+          <label>Preco de venda na Amazon (USD)</label>
+          <div class="calc-input-row">
+            <span class="calc-prefix">$</span>
+            <input type="number" id="c_price" value="27.99" min="0" step="0.01" oninput="calcROI()" />
+          </div>
+        </div>
+
+        <div class="calc-field">
+          <label>Custo de envio ao comprador (FBM apenas)</label>
+          <div class="calc-input-row">
+            <span class="calc-prefix">$</span>
+            <input type="number" id="c_ship_buyer" value="0" min="0" step="0.01" oninput="calcROI()" />
+          </div>
+          <span class="calc-hint">Deixe 0 se usar FBA (Amazon entrega)</span>
+        </div>
+      </div>
+
+      <div class="calc-card">
+        <div class="calc-card-title">Taxas da Amazon</div>
+
+        <div class="calc-field">
+          <label>Categoria do produto</label>
+          <select id="c_category" onchange="applyCategory()">
+            <option value="15">Geral / Eletronicos (15%)</option>
+            <option value="8">Computadores e Acessorios (8%)</option>
+            <option value="8">Celulares / Smartphones (8%)</option>
+            <option value="15">Casa e Cozinha (15%)</option>
+            <option value="15">Esportes e Ar Livre (15%)</option>
+            <option value="15">Brinquedos e Jogos (15%)</option>
+            <option value="15">Ferramentas e Home Improvement (15%)</option>
+            <option value="20">Joias (20%)</option>
+            <option value="17">Relogios (17%)</option>
+            <option value="8">Livros (15%) / Midia (15%)</option>
+            <option value="15">Beleza e Cuidados Pessoais (15%)</option>
+            <option value="15">Saude e Casa (15%)</option>
+            <option value="15">Roupas e Calcados (17%)</option>
+            <option value="6">Automoveis e Pecas (6-12%)</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label>Taxa de encaminhamento (Referral Fee %)</label>
+          <div class="calc-input-row">
+            <input type="number" id="c_referral_pct" value="15" min="0" max="50" step="0.5" oninput="calcROI()" />
+            <span class="calc-suffix">%</span>
+          </div>
+        </div>
+
+        <div class="calc-field">
+          <label>Taxa de fechamento variavel (Closing Fee)</label>
+          <div class="calc-input-row">
+            <span class="calc-prefix">$</span>
+            <input type="number" id="c_closing" value="0" min="0" step="0.01" oninput="calcROI()" />
+          </div>
+          <span class="calc-hint">Geralmente $0.00 para maioria dos produtos</span>
+        </div>
+      </div>
+
+      <div class="calc-card">
+        <div class="calc-card-title">Custos de Logistica FBA</div>
+
+        <div class="calc-field">
+          <label>Tamanho do produto</label>
+          <select id="c_size" onchange="applySize()">
+            <option value="small_standard">Pequeno padrao (ate 16oz)</option>
+            <option value="large_standard" selected>Grande padrao (16oz - 20lb)</option>
+            <option value="small_oversize">Oversize pequeno</option>
+            <option value="medium_oversize">Oversize medio</option>
+            <option value="large_oversize">Oversize grande</option>
+          </select>
+        </div>
+
+        <div class="calc-field">
+          <label>Taxa FBA (fulfillment fee por unidade)</label>
+          <div class="calc-input-row">
+            <span class="calc-prefix">$</span>
+            <input type="number" id="c_fba_fee" value="3.22" min="0" step="0.01" oninput="calcROI()" />
+          </div>
+          <span class="calc-hint">Estimativa automatica pelo tamanho. Ajuste se necessario.</span>
+        </div>
+
+        <div class="calc-field">
+          <label>Custo de armazenamento mensal por unidade</label>
+          <div class="calc-input-row">
+            <span class="calc-prefix">$</span>
+            <input type="number" id="c_storage" value="0.01" min="0" step="0.01" oninput="calcROI()" />
+          </div>
+        </div>
+
+        <div class="calc-field">
+          <label>Unidades medias em estoque</label>
+          <input type="number" id="c_stock_units" value="1" min="1" step="1" oninput="calcROI()" />
+        </div>
+
+        <div class="calc-field">
+          <label>Estimativa de unidades vendidas por mes</label>
+          <input type="number" id="c_monthly_sales" value="10" min="1" step="1" oninput="calcROI()" />
+        </div>
+      </div>
+
+      <div class="calc-card">
+        <div class="calc-card-title">Seus Custos de Compra e Preparo</div>
+
+        <div class="calc-field">
+          <label>Custo de compra do produto (fornecedor)</label>
+          <div class="calc-input-row">
+            <span class="calc-prefix">$</span>
+            <input type="number" id="c_cogs" value="10.00" min="0" step="0.01" oninput="calcROI()" />
+          </div>
+        </div>
+
+        <div class="calc-field">
+          <label>Frete do fornecedor ate o prep center</label>
+          <div class="calc-input-row">
+            <span class="calc-prefix">$</span>
+            <input type="number" id="c_freight" value="1.00" min="0" step="0.01" oninput="calcROI()" />
+          </div>
+        </div>
+
+        <div class="calc-field">
+          <label>Custo do prep center por unidade</label>
+          <div class="calc-input-row">
+            <span class="calc-prefix">$</span>
+            <input type="number" id="c_prep" value="0.50" min="0" step="0.01" oninput="calcROI()" />
+          </div>
+          <span class="calc-hint">Etiquetagem FNSKU, embalagem, inspecao. Media: $0.40-0.60</span>
+        </div>
+
+        <div class="calc-field">
+          <label>Frete do prep center para Amazon FBA</label>
+          <div class="calc-input-row">
+            <span class="calc-prefix">$</span>
+            <input type="number" id="c_fba_inbound" value="0.36" min="0" step="0.01" oninput="calcROI()" />
+          </div>
+          <span class="calc-hint">Custo de entrada FBA (inbound shipping). Media: $0.20-0.50</span>
+        </div>
+
+        <div class="calc-field">
+          <label>Outros custos (imposto, taxa de importacao, etc.)</label>
+          <div class="calc-input-row">
+            <span class="calc-prefix">$</span>
+            <input type="number" id="c_other" value="0" min="0" step="0.01" oninput="calcROI()" />
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /calc-col esquerda -->
+
+    <!-- COLUNA DIREITA: RESULTADOS -->
+    <div class="calc-col calc-results-col">
+
+      <div class="calc-result-card" id="calc_verdict_card">
+        <div class="calc-verdict" id="calc_verdict_text">CALCULANDO...</div>
+        <div class="calc-verdict-sub" id="calc_verdict_sub"></div>
+      </div>
+
+      <div class="calc-card">
+        <div class="calc-card-title">Resumo Financeiro (por unidade)</div>
+
+        <div class="calc-row-result">
+          <span>Preco de venda</span>
+          <span class="calc-val-green" id="r_price">-</span>
+        </div>
+        <div class="calc-row-result calc-indent">
+          <span>(-) Taxa de encaminhamento</span>
+          <span class="calc-val-red" id="r_referral">-</span>
+        </div>
+        <div class="calc-row-result calc-indent">
+          <span>(-) Taxa de fechamento</span>
+          <span class="calc-val-red" id="r_closing">-</span>
+        </div>
+        <div class="calc-row-result calc-indent">
+          <span>(-) Taxa FBA (fulfillment)</span>
+          <span class="calc-val-red" id="r_fba">-</span>
+        </div>
+        <div class="calc-row-result calc-indent">
+          <span>(-) Armazenamento FBA</span>
+          <span class="calc-val-red" id="r_storage">-</span>
+        </div>
+        <div class="calc-row-result calc-subtotal">
+          <span>= Receita liquida Amazon</span>
+          <span id="r_net_amazon">-</span>
+        </div>
+
+        <div class="calc-divider"></div>
+
+        <div class="calc-row-result calc-indent">
+          <span>(-) Custo do produto</span>
+          <span class="calc-val-red" id="r_cogs">-</span>
+        </div>
+        <div class="calc-row-result calc-indent">
+          <span>(-) Frete fornecedor â†’ prep</span>
+          <span class="calc-val-red" id="r_freight">-</span>
+        </div>
+        <div class="calc-row-result calc-indent">
+          <span>(-) Prep center</span>
+          <span class="calc-val-red" id="r_prep">-</span>
+        </div>
+        <div class="calc-row-result calc-indent">
+          <span>(-) Frete prep â†’ FBA</span>
+          <span class="calc-val-red" id="r_inbound">-</span>
+        </div>
+        <div class="calc-row-result calc-indent">
+          <span>(-) Outros custos</span>
+          <span class="calc-val-red" id="r_other">-</span>
+        </div>
+
+        <div class="calc-divider"></div>
+
+        <div class="calc-row-result calc-total">
+          <span>LUCRO LIQUIDO</span>
+          <span id="r_profit">-</span>
+        </div>
+        <div class="calc-row-result calc-total">
+          <span>MARGEM</span>
+          <span id="r_margin">-</span>
+        </div>
+        <div class="calc-row-result calc-total">
+          <span>ROI</span>
+          <span id="r_roi">-</span>
+        </div>
+      </div>
+
+      <div class="calc-card">
+        <div class="calc-card-title">Projecao Mensal</div>
+        <div class="calc-row-result">
+          <span>Unidades/mes</span>
+          <span id="r_monthly_units">-</span>
+        </div>
+        <div class="calc-row-result">
+          <span>Receita bruta/mes</span>
+          <span class="calc-val-green" id="r_monthly_rev">-</span>
+        </div>
+        <div class="calc-row-result">
+          <span>Total custos/mes</span>
+          <span class="calc-val-red" id="r_monthly_costs">-</span>
+        </div>
+        <div class="calc-row-result calc-total">
+          <span>Lucro liquido/mes</span>
+          <span id="r_monthly_profit">-</span>
+        </div>
+        <div class="calc-row-result">
+          <span>Capital necessario (estoque)</span>
+          <span id="r_capital">-</span>
+        </div>
+      </div>
+
+      <div class="calc-card">
+        <div class="calc-card-title">Grafico de Composicao de Custos</div>
+        <div class="calc-bar-chart" id="calc_chart"></div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <a href="https://sellercentral.amazon.com/revcal?ref=RC2nonlogin" target="_blank" class="btn btn-secondary" style="width:100%;text-align:center;display:block;">
+          Abrir Calculadora Oficial Amazon FBA
+        </a>
+      </div>
+
+    </div><!-- /calc-col resultados -->
+
+  </div>
+</div><!-- /tab-calc -->
+
+</div><!-- /container -->
+
+<script>
+const CORS_PROXIES = [
+  url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+  url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+  url => `https://thingproxy.freeboard.io/fetch/${url}`,
+];
+
+async function proxyFetch(url) {
+  const resp = await fetch(`/proxy?url=${encodeURIComponent(url)}`, { signal: AbortSignal.timeout(15000) });
+  const ct = resp.headers.get("Content-Type") || "";
+  if (ct.includes("application/json")) {
+    const data = await resp.json();
+    if (data.blocked) throw new Error("SITE_BLOCKED");
+    throw new Error(data.error || "Erro ao buscar conteÃºdo.");
+  }
+  return resp.text();
+}
+
+const CORS_PROXY = "https://corsproxy.io/?";
+const KEEPA_BASE = "https://api.keepa.com/product?key=demo&domain=1&asin=";
+
+const RESTRICTED_KEYWORDS = [
+  "weapon", "gun", "rifle", "pistol", "ammunition", "explosive",
+  "tobacco", "cigarette", "alcohol", "spirits", "wine", "beer",
+  "drug", "pharmaceutical", "prescription", "otc medicine",
+  "dangerous goods", "hazmat"
+];
+
+const APPROVAL_CATEGORIES = [
+  "jewelry", "automotive", "music", "clothing", "shoes", "footwear",
+  "watches", "beauty", "health", "personal care", "grocery", "food",
+  "apparel", "fashion", "collectibles", "coins", "fine art"
+];
+
+const FREE_CATEGORIES = [
+  "electronics", "home", "kitchen", "sports", "tools", "toys",
+  "books", "computer", "office", "garden", "patio", "pet supplies",
+  "baby", "camera", "video games", "musical instruments"
+];
+
+let searchHistory = JSON.parse(localStorage.getItem("asin_history") || "[]");
+
+function renderHistory() {
+  const section = document.getElementById("historySection");
+  const list = document.getElementById("historyList");
+  if (searchHistory.length === 0) { section.style.display = "none"; return; }
+  section.style.display = "block";
+  list.innerHTML = searchHistory.map(a =>
+    `<span class="history-item" onclick="loadFromHistory('${a}')">${a}</span>`
+  ).join("");
+}
+
+function addToHistory(asin) {
+  searchHistory = [asin, ...searchHistory.filter(a => a !== asin)].slice(0, 12);
+  localStorage.setItem("asin_history", JSON.stringify(searchHistory));
+  renderHistory();
+}
+
+function clearHistory() {
+  searchHistory = [];
+  localStorage.removeItem("asin_history");
+  renderHistory();
+}
+
+function loadFromHistory(asin) {
+  document.getElementById("asinInput").value = asin;
+  searchASIN();
+}
+
+document.getElementById("asinInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") searchASIN();
+});
+
+function setLoading(on) {
+  document.getElementById("loading").style.display = on ? "block" : "none";
+  document.getElementById("searchBtn").disabled = on;
+  document.getElementById("result").style.display = "none";
+  document.getElementById("errorBox").style.display = "none";
+}
+
+function showError(msg) {
+  const box = document.getElementById("errorBox");
+  box.textContent = msg;
+  box.style.display = "block";
+}
+
+function getEligibility(data) {
+  const category = (data.category || "").toLowerCase();
+  const title = (data.title || "").toLowerCase();
+
+  const isRestricted = RESTRICTED_KEYWORDS.some(k => title.includes(k) || category.includes(k));
+  const needsApproval = APPROVAL_CATEGORIES.some(k => category.includes(k));
+
+  if (isRestricted) {
+    return {
+      status: "restricted",
+      title: "Produto Restrito / Proibido",
+      icon: "X",
+      details: [
+        "Este produto pode pertencer a uma categoria restrita na Amazon.",
+        "Armas, medicamentos, alcool, tabaco e produtos perigosos sao proibidos para a maioria dos vendedores.",
+        "Verifique a politica completa no Seller Central antes de tentar listar.",
+        "Link: Seller Central > Catalogo > Restricoes de produtos"
+      ]
+    };
+  }
+
+  if (needsApproval) {
+    return {
+      status: "warning",
+      title: "Aprovacao Necessaria para Vender",
+      icon: "!",
+      details: [
+        "Esta categoria requer aprovacao previa da Amazon para venda.",
+        "Voce pode solicitar aprovacao em: Seller Central > Catalogo > Solicitar Aprovacao.",
+        "Tenha em maos: faturas de fornecedores, certificados de autenticidade e fotos do produto.",
+        "O processo de aprovacao pode levar alguns dias uteis.",
+        "Verifique tambem restricoes de marca (Brand Registry)."
+      ]
+    };
+  }
+
+  return {
+    status: "ok",
+    title: "Disponivel para Revenda",
+    icon: "v",
+    details: [
+      "Esta categoria geralmente permite venda por terceiros sem aprovacao previa.",
+      "Verifique se o produto nao esta protegido por Brand Registry (marcas exclusivas).",
+      "Confira a condicao permitida: Novo, Usado ou Renovado.",
+      "Consulte o preco minimo anunciado (MAP) se aplicavel.",
+      "Certifique-se de ter nota fiscal ou invoice do fornecedor para cada lote."
+    ]
+  };
+}
+
+async function fetchProductData(asin) {
+  const url = `${CORS_PROXY}https://www.amazon.com/dp/${asin}`;
+  const resp = await fetch(url, {
+    headers: { "User-Agent": "Mozilla/5.0" }
+  });
+  if (!resp.ok) throw new Error("Produto nao encontrado ou indisponivel.");
+  const html = await resp.text();
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+
+  const get = (sel) => {
+    const el = doc.querySelector(sel);
+    return el ? el.textContent.trim() : null;
+  };
+
+  const title =
+    get("#productTitle") ||
+    get("h1.a-size-large") ||
+    get("span#productTitle") ||
+    "Titulo nao disponivel";
+
+  const brand =
+    get("#bylineInfo") ||
+    get(".po-brand .a-span9") ||
+    get("a#bylineInfo") ||
+    "";
+
+  const price =
+    get(".a-price .a-offscreen") ||
+    get("#priceblock_ourprice") ||
+    get("#priceblock_dealprice") ||
+    get(".a-price-whole") ||
+    "Indisponivel";
+
+  const imgEl = doc.querySelector("#landingImage") ||
+                doc.querySelector("#imgTagWrapperId img") ||
+                doc.querySelector(".a-dynamic-image");
+  const img = imgEl ? (imgEl.getAttribute("data-old-hires") || imgEl.src || "") : "";
+
+  const category =
+    get("#wayfinding-breadcrumbs_feature_div") ||
+    get(".a-breadcrumb") ||
+    get("#nav-subnav .nav-a-content") ||
+    "";
+
+  const rating =
+    get("#acrPopover") ||
+    get(".a-icon-alt") ||
+    "";
+
+  const rank =
+    get("#SalesRank") ||
+    get("#detailBulletsWrapper_feature_div") ||
+    "";
+
+  return { title, brand, price, img, category, rating, rank, asin };
+}
+
+async function searchASIN() {
+  const rawAsin = document.getElementById("asinInput").value.trim().toUpperCase();
+  const asin = rawAsin.replace(/[^A-Z0-9]/g, "");
+
+  if (!asin || asin.length < 9 || asin.length > 10) {
+    showError("Por favor insira um ASIN valido (10 caracteres, ex: B08N5WRWNW).");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const data = await fetchProductData(asin);
+    currentAsin = asin;
+
+    document.getElementById("prodAsin").textContent = "ASIN: " + asin;
+    document.getElementById("prodTitle").textContent = data.title;
+    document.getElementById("prodBrand").textContent = data.brand ? "Marca: " + data.brand : "";
+    document.getElementById("prodImg").src = data.img || `https://images.amazon.com/images/P/${asin}.01.LZZZZZZZ.jpg`;
+    document.getElementById("prodCategory").textContent = data.category.slice(0, 60) || "Nao identificada";
+    document.getElementById("prodPrice").textContent = data.price || "Nao disponivel";
+    document.getElementById("prodRank").textContent = data.rank ? data.rank.replace(/.*#/g, "#").slice(0, 30) : "Nao disponivel";
+    document.getElementById("prodRating").textContent = data.rating ? data.rating.slice(0, 20) : "Nao disponivel";
+
+    const elig = getEligibility(data);
+    const box = document.getElementById("eligibilityBox");
+    box.className = "eligibility-box " + elig.status;
+    document.getElementById("eligIcon").textContent = elig.icon === "v" ? "âœ“" : elig.icon === "!" ? "âš " : "âœ—";
+    document.getElementById("eligTitle").textContent = elig.title;
+    const ul = document.getElementById("eligDetails");
+    ul.innerHTML = elig.details.map(d => `<li>${d}</li>`).join("");
+
+    document.getElementById("btnSellerCentral").href =
+      `https://sellercentral.amazon.com/product-search/keywords?ref=xx_catadd_dnav_xx&q=${asin}`;
+    document.getElementById("btnAmazonPage").href = `https://www.amazon.com/dp/${asin}`;
+    document.getElementById("btnAddProduct").href =
+      `https://sellercentral.amazon.com/listing/wizard?asin=${asin}&marketplace=ATVPDKIKX0DER`;
+
+    document.getElementById("result").style.display = "block";
+    addToHistory(asin);
+
+    // Verificacao na conta â€” SP-API ou link direto
+    const realBox = document.getElementById("realEligBox");
+    const realContent = document.getElementById("realEligContent");
+    realBox.style.display = "block";
+    const spCfg = JSON.parse(localStorage.getItem("spapi_config") || "{}");
+
+    if (spCfg.client_id) {
+      realContent.className = "real-elig-loading";
+      realContent.innerHTML = `<div class="spinner" style="width:18px;height:18px;border-width:3px;margin:0;display:inline-block;vertical-align:middle;margin-right:8px;"></div> Consultando SP-API...`;
+      checkRealEligibility(asin);
+    } else {
+      // Modo sem API â€” links diretos Seller Central
+      const scRestrictUrl  = `https://sellercentral.amazon.com/hz/approvalrequest/restrictions/approve?asin=${asin}&marketplaceID=ATVPDKIKX0DER`;
+      const scAddUrl       = `https://sellercentral.amazon.com/listing/wizard?asin=${asin}&marketplace=ATVPDKIKX0DER`;
+      const scSearchUrl    = `https://sellercentral.amazon.com/product-search/search?q=${asin}`;
+      realContent.className = "real-elig-result real-elig-direct";
+      realContent.innerHTML = `
+        <div class="real-elig-status" style="color:#1565c0;font-size:0.95rem;">
+          Verifique diretamente na sua conta Amazon
+        </div>
+        <p style="font-size:0.83rem;color:#444;margin:8px 0 14px;">
+          Clique em um dos botoes abaixo. A Amazon vai abrir ja logada na sua conta e mostrar imediatamente
+          se voce pode vender este produto, se precisa de aprovacao ou se esta bloqueado.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;">
+          <a href="${scRestrictUrl}" target="_blank" class="btn btn-primary" style="font-size:0.85rem;">
+            Verificar Restricoes (ASIN ${asin})
+          </a>
+          <a href="${scAddUrl}" target="_blank" class="btn btn-real" style="font-size:0.85rem;">
+            Tentar Adicionar Produto
+          </a>
+          <a href="${scSearchUrl}" target="_blank" class="btn btn-outline" style="font-size:0.85rem;">
+            Buscar no Catalogo
+          </a>
+        </div>
+        <div class="sc-direct-guide">
+          <div class="sc-guide-step"><span class="sc-guide-num">1</span> Clique em <strong>"Verificar Restricoes"</strong> acima</div>
+          <div class="sc-guide-step"><span class="sc-guide-num">2</span> A Amazon abre ja com o ASIN ${asin} pre-carregado</div>
+          <div class="sc-guide-step"><span class="sc-guide-num">3</span> Se aparecer <strong style="color:#2e7d32">"Vender este produto"</strong> â€” pode vender</div>
+          <div class="sc-guide-step"><span class="sc-guide-num">4</span> Se aparecer <strong style="color:#e65100">"Solicitar aprovacao"</strong> â€” precisa de aprovacao</div>
+          <div class="sc-guide-step"><span class="sc-guide-num">5</span> Se aparecer <strong style="color:#c62828">"Nao elegivel"</strong> â€” produto bloqueado</div>
+        </div>`;
+    }
+
+  } catch (err) {
+    showError("Nao foi possivel obter dados do produto. Verifique o ASIN e tente novamente. (" + err.message + ")");
+  } finally {
+    setLoading(false);
+  }
+}
+
+let currentAsin = "";
+
+renderHistory();
+
+// ===================== SP-API CONFIG =====================
+function loadApiConfig() {
+  const cfg = JSON.parse(localStorage.getItem("spapi_config") || "{}");
+  if (cfg.client_id) document.getElementById("cfg_client_id").value = cfg.client_id;
+  if (cfg.client_secret) document.getElementById("cfg_client_secret").value = cfg.client_secret;
+  if (cfg.refresh_token) document.getElementById("cfg_refresh_token").value = cfg.refresh_token;
+  if (cfg.aws_key) document.getElementById("cfg_aws_key").value = cfg.aws_key;
+  if (cfg.aws_secret) document.getElementById("cfg_aws_secret").value = cfg.aws_secret;
+  if (cfg.seller_id) document.getElementById("cfg_seller_id").value = cfg.seller_id;
+  updateApiBanner(!!cfg.client_id);
+}
+
+function saveApiConfig() {
+  const cfg = {
+    client_id:     document.getElementById("cfg_client_id").value.trim(),
+    client_secret: document.getElementById("cfg_client_secret").value.trim(),
+    refresh_token: document.getElementById("cfg_refresh_token").value.trim(),
+    aws_key:       document.getElementById("cfg_aws_key").value.trim(),
+    aws_secret:    document.getElementById("cfg_aws_secret").value.trim(),
+    seller_id:     document.getElementById("cfg_seller_id").value.trim()
+  };
+  if (!cfg.client_id || !cfg.refresh_token || !cfg.aws_key || !cfg.aws_secret || !cfg.seller_id) {
+    const msg = document.getElementById("apiConfigMsg");
+    msg.style.color = "#c62828";
+    msg.textContent = "Preencha todos os campos obrigatorios: Client ID, Refresh Token, AWS Keys e Seller ID.";
+    return;
+  }
+  localStorage.setItem("spapi_config", JSON.stringify(cfg));
+  const msg = document.getElementById("apiConfigMsg");
+  msg.style.color = "#2e7d32";
+  msg.textContent = "Credenciais salvas com sucesso no navegador.";
+  updateApiBanner(true);
+  setTimeout(() => { document.getElementById("apiConfigPanel").style.display = "none"; }, 1200);
+}
+
+function clearApiConfig() {
+  localStorage.removeItem("spapi_config");
+  ["cfg_client_id","cfg_client_secret","cfg_refresh_token","cfg_aws_key","cfg_aws_secret","cfg_seller_id"]
+    .forEach(id => document.getElementById(id).value = "");
+  updateApiBanner(false);
+  const msg = document.getElementById("apiConfigMsg");
+  msg.style.color = "#666";
+  msg.textContent = "Credenciais removidas.";
+}
+
+function updateApiBanner(configured) {
+  document.getElementById("apiConfigBanner").style.display    = configured ? "none" : "flex";
+  document.getElementById("apiConfigBannerOk").style.display  = configured ? "flex" : "none";
+}
+
+function toggleApiConfig() {
+  const panel = document.getElementById("apiConfigPanel");
+  panel.style.display = panel.style.display === "none" ? "block" : "none";
+}
+
+// ===================== AWS SIG V4 =====================
+async function sha256hex(message) {
+  const buf = new TextEncoder().encode(message);
+  const hash = await crypto.subtle.digest("SHA-256", buf);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+async function hmac(key, msg) {
+  const k = typeof key === "string" ? new TextEncoder().encode(key) : key;
+  const m = new TextEncoder().encode(msg);
+  const ck = await crypto.subtle.importKey("raw", k, { name:"HMAC", hash:"SHA-256" }, false, ["sign"]);
+  return new Uint8Array(await crypto.subtle.sign("HMAC", ck, m));
+}
+
+async function hmacHex(key, msg) {
+  const raw = await hmac(key, msg);
+  return Array.from(raw).map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+async function getSigningKey(secret, date, region, service) {
+  const kDate    = await hmac("AWS4" + secret, date);
+  const kRegion  = await hmac(kDate, region);
+  const kService = await hmac(kRegion, service);
+  return hmac(kService, "aws4_request");
+}
+
+async function signedFetch(method, url, accessKey, secretKey, region, service, accessToken, body = "") {
+  const urlObj  = new URL(url);
+  const now     = new Date();
+  const amzDate = now.toISOString().replace(/[:-]|\.\d{3}/g,"").slice(0,15) + "Z";
+  const dateStr = amzDate.slice(0,8);
+
+  const payloadHash = await sha256hex(body);
+
+  const headers = {
+    "host":                  urlObj.host,
+    "x-amz-date":            amzDate,
+    "x-amz-security-token":  "",
+    "x-amz-access-token":    accessToken,
+    "content-type":          "application/json"
+  };
+
+  const canonHeaders = Object.keys(headers).sort()
+    .map(k => `${k}:${headers[k]}\n`).join("");
+  const signedHeaders = Object.keys(headers).sort().join(";");
+
+  const canonRequest = [
+    method,
+    urlObj.pathname,
+    urlObj.search.slice(1),
+    canonHeaders,
+    signedHeaders,
+    payloadHash
+  ].join("\n");
+
+  const credScope  = `${dateStr}/${region}/${service}/aws4_request`;
+  const strToSign  = `AWS4-HMAC-SHA256\n${amzDate}\n${credScope}\n${await sha256hex(canonRequest)}`;
+  const signingKey = await getSigningKey(secretKey, dateStr, region, service);
+  const signature  = await hmacHex(signingKey, strToSign);
+  const authHeader = `AWS4-HMAC-SHA256 Credential=${accessKey}/${credScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+
+  const fetchHeaders = {};
+  Object.keys(headers).forEach(k => { if (headers[k]) fetchHeaders[k] = headers[k]; });
+  fetchHeaders["Authorization"] = authHeader;
+  fetchHeaders["x-amz-date"]    = amzDate;
+
+  const resp = await fetch(url, {
+    method,
+    headers: fetchHeaders,
+    body: body || undefined
+  });
+  return resp;
+}
+
+// ===================== REAL ELIGIBILITY CHECK =====================
+async function getLWAToken(clientId, clientSecret, refreshToken) {
+  const resp = await fetch("https://api.amazon.com/auth/o2/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      grant_type:    "refresh_token",
+      refresh_token: refreshToken,
+      client_id:     clientId,
+      client_secret: clientSecret
+    })
+  });
+  if (!resp.ok) throw new Error("Falha ao obter token LWA. Verifique Client ID e Client Secret.");
+  const data = await resp.json();
+  if (!data.access_token) throw new Error("Token LWA invalido: " + JSON.stringify(data));
+  return data.access_token;
+}
+
+async function checkRealEligibility(asin) {
+  const cfg = JSON.parse(localStorage.getItem("spapi_config") || "{}");
+  if (!cfg.client_id) { alert("Configure as credenciais SP-API primeiro."); return; }
+
+  const box = document.getElementById("realEligBox");
+  const content = document.getElementById("realEligContent");
+  box.style.display = "block";
+  content.className = "real-elig-loading";
+  content.innerHTML = `<div class="spinner" style="width:18px;height:18px;border-width:3px;margin:0;display:inline-block;vertical-align:middle;margin-right:8px;"></div> Obtendo token de acesso...`;
+
+  try {
+    const accessToken = await getLWAToken(cfg.client_id, cfg.client_secret, cfg.refresh_token);
+
+    content.innerHTML = `<div class="spinner" style="width:18px;height:18px;border-width:3px;margin:0;display:inline-block;vertical-align:middle;margin-right:8px;"></div> Consultando restricoes para ASIN ${asin}...`;
+
+    const endpoint = `https://sellingpartnerapi-na.amazon.com/listings/2021-08-01/restrictions?asin=${asin}&sellerId=${cfg.seller_id}&marketplaceIds=ATVPDKIKX0DER&conditionType=new_new`;
+
+    const resp = await signedFetch("GET", endpoint, cfg.aws_key, cfg.aws_secret, "us-east-1", "execute-api", accessToken);
+    const data = await resp.json();
+
+    if (!resp.ok) {
+      throw new Error(data.errors?.[0]?.message || `Erro ${resp.status}: ${JSON.stringify(data)}`);
+    }
+
+    const restrictions = data.restrictions || [];
+
+    if (restrictions.length === 0) {
+      content.className = "real-elig-result real-elig-ok";
+      content.innerHTML = `
+        <div class="real-elig-status">âœ“ PODE VENDER ESTE PRODUTO</div>
+        <div>Nenhuma restricao encontrada para o ASIN <strong>${asin}</strong> na sua conta.</div>
+        <div style="margin-top:8px;font-size:0.8rem;color:#555;">Marketplace: amazon.com (ATVPDKIKX0DER) | Condicao: Novo</div>`;
+    } else {
+      const reasons = restrictions.flatMap(r => r.reasons || []);
+      const needsApproval = reasons.some(r => r.links && r.links.length > 0);
+
+      if (needsApproval) {
+        const links = reasons.flatMap(r => r.links || []).filter(l => l.resource);
+        content.className = "real-elig-result real-elig-warn";
+        content.innerHTML = `
+          <div class="real-elig-status">! APROVACAO NECESSARIA</div>
+          <div>Voce precisa de aprovacao para vender o ASIN <strong>${asin}</strong>.</div>
+          <ul class="real-elig-reasons">
+            ${reasons.map(r => `<li>${r.message}</li>`).join("")}
+          </ul>
+          ${links.length ? `<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;">
+            ${links.map(l => `<a href="${l.resource}" target="_blank" class="btn btn-primary" style="font-size:0.78rem;padding:6px 14px;">${l.title || "Solicitar Aprovacao"}</a>`).join("")}
+          </div>` : ""}`;
+      } else {
+        content.className = "real-elig-result real-elig-block";
+        content.innerHTML = `
+          <div class="real-elig-status">âœ— VENDA BLOQUEADA</div>
+          <div>Este produto esta restrito para sua conta de vendedor.</div>
+          <ul class="real-elig-reasons">
+            ${reasons.map(r => `<li>${r.message}</li>`).join("")}
+          </ul>`;
+      }
+    }
+  } catch (err) {
+    content.className = "real-elig-result real-elig-block";
+    content.innerHTML = `<div class="real-elig-status">Erro na consulta SP-API</div><div style="font-size:0.82rem;">${err.message}</div>`;
+  }
+}
+
+loadApiConfig();
+
+// ===================== SMART SEARCH (BUSCA POR FORNECEDOR) =====================
+function ssStep(n, state) {
+  const el = document.getElementById("ss" + n);
+  if (!el) return;
+  el.className = "smart-step " + state;
+  if (state === "done") el.querySelector(".ss-dot").textContent = "âœ“";
+  else el.querySelector(".ss-dot").textContent = "";
+  const line = el.nextElementSibling;
+  if (line && line.classList.contains("smart-step-line")) {
+    line.classList.toggle("done", state === "done");
+  }
+}
+
+function ssReset() {
+  for (let i = 1; i <= 4; i++) ssStep(i, "");
+  document.getElementById("manualFallback").style.display = "none";
+}
+
+async function runManualSearch() {
+  const name = document.getElementById("mf_name").value.trim();
+  const price = parseFloat(document.getElementById("mf_price").value) || 0;
+  if (!name) { alert("Insira o nome do produto."); return; }
+  document.getElementById("manualFallback").style.display = "none";
+  document.getElementById("smartError").style.display = "none";
+  document.getElementById("smartResult").style.display = "none";
+  document.getElementById("smartBtn").disabled = true;
+  ssStep(1, "done"); ssStep(2, "loading"); ssStep(3, ""); ssStep(4, "");
+  try {
+    const query = encodeURIComponent(name);
+    const searchUrl = `https://www.amazon.com/s?k=${query}`;
+    const html2 = await proxyFetch(searchUrl);
+    const asinMatch = html2.match(/data-asin="([A-Z0-9]{10})"/);
+    const asin = asinMatch ? asinMatch[1] : null;
+    if (!asin) throw new Error("Produto nÃ£o encontrado na Amazon. Tente um nome mais especÃ­fico.");
+    ssStep(2, "done"); ssStep(3, "loading");
+    const amzUrl = `https://www.amazon.com/dp/${asin}`;
+    const html3 = await proxyFetch(amzUrl);
+    const doc3 = new DOMParser().parseFromString(html3, "text/html");
+    const amzTitle = extractTitleFromDoc(doc3) || name;
+    const amzPrice = extractPriceFromDoc(doc3) || 0;
+    const imgMatch = html3.match(/id="landingImage"[^>]*src="([^"]+)"/);
+    const imgUrl = imgMatch ? imgMatch[1] : "";
+    const bsrMatch = html3.match(/#([\d,]+)\s+in\s+([^(<\n]+)/i);
+    const rank = bsrMatch ? parseInt(bsrMatch[1].replace(/,/g,"")) : 0;
+    const category = bsrMatch ? bsrMatch[2].trim() : "N/A";
+    const refPct = getCategoryRefFee(category);
+    const supplierPrice = price;
+    document.getElementById("sp_asin").textContent = "ASIN: " + asin;
+    document.getElementById("sp_title").textContent = amzTitle;
+    document.getElementById("sp_brand").textContent = "";
+    document.getElementById("sp_img").src = imgUrl;
+    document.getElementById("sp_amzprice").textContent = amzPrice ? "$" + amzPrice.toFixed(2) : "N/A";
+    document.getElementById("sp_category").textContent = category;
+    document.getElementById("sp_bsr").textContent = rank ? "#" + rank.toLocaleString() : "N/A";
+    document.getElementById("sp_eliglink").href = `https://sellercentral.amazon.com/hz/approvalrequest/restrictions/approve?asin=${asin}&marketplaceID=ATVPDKIKX0DER`;
+    document.getElementById("sp_addlink").href = `https://sellercentral.amazon.com/listing/wizard?asin=${asin}&marketplace=ATVPDKIKX0DER`;
+    document.getElementById("keepaChart").src = `https://graph.keepa.com/pricehistory.png?asin=${asin}&domain=com&w=700&h=180`;
+    document.getElementById("sc2_cogs").value = supplierPrice ? supplierPrice.toFixed(2) : "0";
+    document.getElementById("sc2_price").value = amzPrice ? amzPrice.toFixed(2) : "0";
+    document.getElementById("sc2_ref").value = refPct;
+    ssStep(3, "done"); ssStep(4, "loading");
+    calcSmart();
+    ssStep(4, "done");
+    const reviewMatch = html3.match(/id="acrCustomerReviewText"[^>]*>([\d,]+)/);
+    const reviewCount = reviewMatch ? parseInt(reviewMatch[1].replace(/,/g,"")) : 0;
+    const sellersMatch = html3.match(/(\d+)\s+new\s+offer|(\d+)\s+used\s+offer|See all (\d+)/i);
+    const sellers = sellersMatch ? parseInt(sellersMatch[1]||sellersMatch[2]||sellersMatch[3]) : 0;
+    runSellerAmpAnalysis({ asin, amzTitle, amzPrice, supplierPrice, category, rating: "4.0", rank, reviewCount, sellers });
+    document.getElementById("smartResult").style.display = "block";
+  } catch (err) {
+    ssReset();
+    document.getElementById("smartError").style.display = "block";
+    document.getElementById("smartError").textContent = "Erro: " + err.message;
+    document.getElementById("manualFallback").style.display = "block";
+  } finally {
+    document.getElementById("smartBtn").disabled = false;
+  }
+}
+
+async function runSmartSearch() {
+  const url = document.getElementById("smartUrl").value.trim();
+  if (!url || !url.startsWith("http")) {
+    document.getElementById("smartError").style.display = "block";
+    document.getElementById("smartError").textContent = "Cole uma URL valida (comecando com https://...)";
+    return;
+  }
+  document.getElementById("smartBtn").disabled = true;
+  document.getElementById("smartError").style.display = "none";
+  document.getElementById("smartResult").style.display = "none";
+  document.getElementById("smartSteps").style.display = "flex";
+  ssReset();
+
+  let supplierTitle = "", supplierPrice = null, asin = "", amzPrice = null, category = "", amzTitle = "";
+
+  try {
+    // PASSO 1
+    ssStep(1, "active");
+    const html1 = await proxyFetch(url);
+    const doc1 = new DOMParser().parseFromString(html1, "text/html");
+    supplierTitle = extractTitleFromDoc(doc1) || "";
+    supplierPrice = extractPriceFromDoc(doc1);
+    if (!supplierTitle) throw new Error("Nao foi possivel identificar o produto nesta pagina. Tente outro link do mesmo produto.");
+    ssStep(1, "done");
+
+    // PASSO 2
+    ssStep(2, "active");
+    const q = encodeURIComponent(supplierTitle.slice(0, 80));
+    const html2 = await proxyFetch(`https://www.amazon.com/s?k=${q}`);
+    const m = html2.match(/data-asin="([A-Z0-9]{10})"/);
+    if (!m) throw new Error("Nenhum produto encontrado na Amazon para: \"" + supplierTitle.slice(0,60) + '"');
+    asin = m[1];
+
+    const html3 = await proxyFetch(`https://www.amazon.com/dp/${asin}`);
+    const doc3 = new DOMParser().parseFromString(html3, "text/html");
+    amzTitle = doc3.querySelector("#productTitle")?.textContent?.trim() || supplierTitle;
+    const priceEl = doc3.querySelector(".a-price .a-offscreen") || doc3.querySelector("#priceblock_ourprice");
+    amzPrice = priceEl ? extractPriceFromText(priceEl.getAttribute("content") || priceEl.textContent) : null;
+    category = doc3.querySelector("#wayfinding-breadcrumbs_feature_div")?.textContent?.trim().replace(/\s+/g," ").slice(0,60)
+              || doc3.querySelector(".a-breadcrumb")?.textContent?.trim().replace(/\s+/g," ").slice(0,50) || "";
+    const imgEl = doc3.querySelector("#landingImage") || doc3.querySelector("#imgTagWrapperId img");
+    const imgSrc = imgEl ? (imgEl.getAttribute("data-old-hires") || imgEl.src || "") : "";
+    const brand = doc3.querySelector("#bylineInfo")?.textContent?.trim() || "";
+    ssStep(2, "done");
+
+    // PASSO 3
+    ssStep(3, "active");
+    const cat = category.toLowerCase();
+    let refPct = 15;
+    if (cat.includes("jewelry")) refPct = 20;
+    else if (cat.includes("watch")) refPct = 17;
+    else if (cat.includes("computer") || cat.includes("cell") || cat.includes("phone")) refPct = 8;
+    const eligAuto = getEligibility({ title: amzTitle, category });
+    ssStep(3, "done");
+
+    // PASSO 4
+    ssStep(4, "active");
+    const fbaFee = 3.68;
+    const freight = 1.00, prep = 0.50, inbound = 0.36;
+    const cogs = supplierPrice || 0;
+    const sellPrice = amzPrice || 0;
+    const referral = sellPrice * (refPct / 100);
+    const totalCosts = cogs + freight + prep + inbound + fbaFee + referral;
+    const profit = sellPrice - totalCosts;
+
+    // PREENCHER UI
+    document.getElementById("sp_img").src = imgSrc;
+    document.getElementById("sp_asin").textContent = "ASIN: " + asin;
+    document.getElementById("sp_title").textContent = amzTitle.slice(0, 100);
+    document.getElementById("sp_brand").textContent = brand;
+    document.getElementById("sp_category").textContent = category;
+    document.getElementById("sp_supplier_price").textContent = supplierPrice ? "$" + supplierPrice.toFixed(2) : "Nao detectado";
+    document.getElementById("sp_amz_price").textContent = amzPrice ? "$" + amzPrice.toFixed(2) : "Ver na Amazon";
+
+    const profitBox = document.getElementById("sp_profit_box");
+    const profitEl2 = document.getElementById("sp_profit_est");
+    if (amzPrice && supplierPrice) {
+      const rough = amzPrice - supplierPrice - fbaFee - referral;
+      profitEl2.textContent = (rough >= 0 ? "+" : "") + "$" + rough.toFixed(2);
+      profitBox.className = "smart-price-box " + (rough > 0 ? "profit" : "loss");
+    } else {
+      profitEl2.textContent = "Preencha abaixo";
+      profitBox.className = "smart-price-box profit";
+    }
+
+    const autoBox = document.getElementById("sp_elig_auto");
+    const iconMap = { ok: "âœ“", warning: "âš ", restricted: "âœ—" };
+    const colorMap = { ok: "#2e7d32", warning: "#e65100", restricted: "#c62828" };
+    const bgMap = { ok: "#e6f4ea", warning: "#fff8e1", restricted: "#fce8e6" };
+    autoBox.style.cssText = `background:${bgMap[eligAuto.status]};border-radius:6px;padding:10px 14px;`;
+    autoBox.innerHTML = `<strong style="color:${colorMap[eligAuto.status]};">${iconMap[eligAuto.status]} ${eligAuto.title}</strong>
+      <ul style="margin:6px 0 0 16px;font-size:0.8rem;color:#444;line-height:1.6;">
+        ${eligAuto.details.map(d => `<li>${d}</li>`).join("")}
+      </ul>`;
+
+    document.getElementById("sp_btn_restrict").href = `https://sellercentral.amazon.com/hz/approvalrequest/restrictions/approve?asin=${asin}&marketplaceID=ATVPDKIKX0DER`;
+    document.getElementById("sp_btn_add").href = `https://sellercentral.amazon.com/listing/wizard?asin=${asin}&marketplace=ATVPDKIKX0DER`;
+    document.getElementById("sp_btn_amz").href = `https://www.amazon.com/dp/${asin}`;
+
+    // PRE-PREENCHER CALCULADORA
+    document.getElementById("sc2_cogs").value = supplierPrice ? supplierPrice.toFixed(2) : "0";
+    document.getElementById("sc2_price").value = amzPrice ? amzPrice.toFixed(2) : "0";
+    document.getElementById("sc2_ref").value = refPct;
+    calcSmart();
+    ssStep(4, "done");
+
+    // SellerAmp-style deep analysis
+    const reviewMatch = html3.match(/id="acrCustomerReviewText"[^>]*>([\d,]+)/);
+    const reviewCount = reviewMatch ? parseInt(reviewMatch[1].replace(/,/g,"")) : 0;
+    const sellersMatch = html3.match(/(\d+)\s+new\s+offer|(\d+)\s+used\s+offer|See all (\d+)/i);
+    const sellers = sellersMatch ? parseInt(sellersMatch[1]||sellersMatch[2]||sellersMatch[3]) : 0;
+    runSellerAmpAnalysis({ asin, amzTitle, amzPrice, supplierPrice, category, rating: "4.0", rank, reviewCount, sellers });
+
+    document.getElementById("smartResult").style.display = "block";
+
+  } catch (err) {
+    ssReset();
+    const msg = err.message || "";
+    const showManual = msg === "SITE_BLOCKED" || msg.toLowerCase().includes("fornecedor") || msg.toLowerCase().includes("acessar") || msg.toLowerCase().includes("failed");
+    if (showManual) {
+      document.getElementById("smartError").style.display = "none";
+      document.getElementById("manualFallback").style.display = "block";
+      if (!document.getElementById("mf_name").value && supplierTitle) document.getElementById("mf_name").value = supplierTitle;
+      if (!document.getElementById("mf_price").value && supplierPrice) document.getElementById("mf_price").value = supplierPrice.toFixed(2);
+    } else {
+      document.getElementById("smartError").style.display = "block";
+      document.getElementById("smartError").textContent = "Erro: " + msg;
+    }
+  } finally {
+    document.getElementById("smartBtn").disabled = false;
+  }
+}
+
+document.getElementById("smartUrl").addEventListener("keydown", e => { if (e.key === "Enter") runSmartSearch(); });
+
+function calcSmart() {
+  const price   = parseFloat(document.getElementById("sc2_price").value) || 0;
+  const refPct  = parseFloat(document.getElementById("sc2_ref").value) || 15;
+  const fbaFee  = parseFloat(document.getElementById("sc2_fba").value) || 3.22;
+  const cogs    = parseFloat(document.getElementById("sc2_cogs").value) || 0;
+  const freight = parseFloat(document.getElementById("sc2_freight").value) || 0;
+  const prep    = parseFloat(document.getElementById("sc2_prep").value) || 0;
+  const inbound = parseFloat(document.getElementById("sc2_inbound").value) || 0;
+
+  const ref      = price * (refPct / 100);
+  const logistics = freight + prep + inbound;
+  const profit   = price - ref - fbaFee - cogs - logistics;
+  const margin   = price > 0 ? (profit / price) * 100 : 0;
+  const roi      = (cogs + logistics) > 0 ? (profit / (cogs + logistics)) * 100 : 0;
+  const fmt = v => "$" + Math.abs(v).toFixed(2);
+
+  const vEl = document.getElementById("scr_verdict");
+  const sEl = document.getElementById("scr_verdict_sub");
+  if (profit >= 3 && roi >= 30 && margin >= 15) {
+    vEl.textContent = "COMPRAR"; vEl.style.color = "#4caf50";
+    sEl.textContent = `Lucro $${profit.toFixed(2)} | ROI ${roi.toFixed(0)}% | Margem ${margin.toFixed(0)}%`;
+  } else if (profit > 0 && roi >= 15) {
+    vEl.textContent = "AVALIAR"; vEl.style.color = "#ff9900";
+    sEl.textContent = `Lucro $${profit.toFixed(2)} | ROI ${roi.toFixed(0)}% | Margem baixa`;
+  } else if (profit > 0) {
+    vEl.textContent = "MARGEM BAIXA"; vEl.style.color = "#ff9900";
+    sEl.textContent = `Lucro $${profit.toFixed(2)} | ROI ${roi.toFixed(0)}%`;
+  } else {
+    vEl.textContent = "NAO COMPRAR"; vEl.style.color = "#ef5350";
+    sEl.textContent = `Prejuizo ${fmt(profit)} por unidade`;
+  }
+
+  const s = id => document.getElementById(id);
+  s("scr_price").textContent = "$" + price.toFixed(2);
+  s("scr_ref").textContent = "-" + fmt(ref);
+  s("scr_fba").textContent = "-" + fmt(fbaFee);
+  s("scr_cogs").textContent = "-" + fmt(cogs);
+  s("scr_logistics").textContent = "-" + fmt(logistics);
+  const pEl = s("scr_profit"); pEl.textContent = (profit >= 0 ? "+" : "-") + fmt(profit);
+  pEl.style.color = profit >= 0 ? "#81c784" : "#ef9a9a";
+  const mEl = s("scr_margin"); mEl.textContent = margin.toFixed(1) + "%";
+  mEl.style.color = margin >= 15 ? "#81c784" : margin > 0 ? "#ff9900" : "#ef9a9a";
+  const rEl = s("scr_roi"); rEl.textContent = roi.toFixed(1) + "%";
+  rEl.style.color = roi >= 30 ? "#81c784" : roi > 0 ? "#ff9900" : "#ef9a9a";
+}
+
+// ===================== SELLERAMP-STYLE ANALYSIS =====================
+const IP_BRANDS = ["apple","nike","lego","disney","sony","samsung","beats","dyson","kitchenaid","yeti","stanley","hydro flask","vitamix","instant pot","keurig","nespresso","dewalt","milwaukee","makita","snap-on"];
+const HAZMAT_KEYWORDS = ["battery","lithium","aerosol","flammable","bleach","acid","peroxide","spray","solvent","alcohol","pesticide","fertilizer","paint","varnish","propane","butane"];
+const MELTABLE_KEYWORDS = ["chocolate","candy","gummy","wax","candle","makeup","lipstick","lip gloss","foundation","concealer","mascara","eyeshadow"];
+
+function bsrToSales(bsr) {
+  if (!bsr || bsr <= 0) return null;
+  if (bsr <= 100)    return "50,000+";
+  if (bsr <= 500)    return "10,000-50,000";
+  if (bsr <= 1000)   return "5,000-10,000";
+  if (bsr <= 3000)   return "2,000-5,000";
+  if (bsr <= 5000)   return "1,000-2,000";
+  if (bsr <= 10000)  return "500-1,000";
+  if (bsr <= 25000)  return "200-500";
+  if (bsr <= 50000)  return "100-200";
+  if (bsr <= 100000) return "50-100";
+  if (bsr <= 200000) return "20-50";
+  return "<20";
+}
+
+function bsrScore(bsr) {
+  if (!bsr) return 20;
+  if (bsr <= 1000)   return 35;
+  if (bsr <= 5000)   return 30;
+  if (bsr <= 15000)  return 25;
+  if (bsr <= 50000)  return 18;
+  if (bsr <= 100000) return 12;
+  return 5;
+}
+
+function parseBSR(text) {
+  const m = text.match(/#([\d,]+)/);
+  return m ? parseInt(m[1].replace(/,/g,"")) : null;
+}
+
+function runSellerAmpAnalysis(data) {
+  const { asin, amzTitle, amzPrice, supplierPrice, category, rating, rank, reviewCount, sellers, doc } = data;
+
+  const panel = document.getElementById("sa_panel");
+  panel.style.display = "block";
+
+  // --- BSR ---
+  const bsr = parseBSR(rank || "");
+  const salesEst = bsrToSales(bsr);
+  document.getElementById("sa_bsr").textContent = bsr ? "#" + bsr.toLocaleString() : "N/D";
+  document.getElementById("sa_bsr_cat").textContent = (category || "").slice(0,30);
+  document.getElementById("sa_sales_est").textContent = salesEst || "N/D";
+
+  // --- Rating/Reviews ---
+  const ratingNum = parseFloat(rating) || 0;
+  const reviews = reviewCount || 0;
+  document.getElementById("sa_reviews").textContent = reviews > 0 ? reviews.toLocaleString() : "N/D";
+  document.getElementById("sa_rating").textContent = ratingNum > 0 ? ratingNum.toFixed(1) + " estrelas" : "Sem avaliacao";
+
+  // --- Competition ---
+  const sellersNum = parseInt(sellers) || 0;
+  let compLevel = "N/D", compColor = "#888";
+  if (sellersNum > 0) {
+    if (sellersNum <= 3)       { compLevel = "Baixa"; compColor = "#2e7d32"; }
+    else if (sellersNum <= 10) { compLevel = "Media"; compColor = "#e65100"; }
+    else                       { compLevel = "Alta"; compColor = "#c62828"; }
+  }
+  const compEl = document.getElementById("sa_competition");
+  compEl.textContent = sellersNum > 0 ? sellersNum + " vendedores" : "N/D";
+  compEl.style.color = compColor;
+  document.getElementById("sa_competition_sub").textContent = compLevel;
+
+  // --- Buy Box ---
+  document.getElementById("sa_buybox").textContent = amzPrice ? "$" + amzPrice.toFixed(2) : "N/D";
+  if (supplierPrice && amzPrice) {
+    const diff = amzPrice - supplierPrice;
+    const bbSub = document.getElementById("sa_buybox_sub");
+    bbSub.textContent = diff > 0 ? "+" + diff.toFixed(2) + " vs fornecedor" : diff.toFixed(2) + " vs fornecedor";
+    bbSub.style.color = diff > 0 ? "#2e7d32" : "#c62828";
+  }
+
+  // --- FBA Tier ---
+  const titleLower = (amzTitle || "").toLowerCase();
+  let tier = "Grande Padrao", fbaEst = "$3.22-$5.26";
+  if (titleLower.includes("small") || titleLower.includes("mini") || titleLower.includes("pack")) { tier = "Pequeno Padrao"; fbaEst = "$3.06-$3.68"; }
+  document.getElementById("sa_tier").textContent = tier;
+  document.getElementById("sa_fba_fee_est").textContent = "Taxa est: " + fbaEst;
+
+  // --- IP / HAZMAT / ALERTS ---
+  const titleFull = (amzTitle || "").toLowerCase();
+  const alerts = [];
+  const ipBrand = IP_BRANDS.find(b => titleFull.includes(b));
+  if (ipBrand) {
+    alerts.push({ cls:"danger", icon:"âš ", text:"IP Alert: Marca " + ipBrand.toUpperCase() + " â€” risco de IP complaint" });
+  } else {
+    alerts.push({ cls:"ok", icon:"âœ“", text:"IP: Nenhuma marca sensivel detectada" });
+  }
+  const hazmat = HAZMAT_KEYWORDS.find(k => titleFull.includes(k));
+  if (hazmat) {
+    alerts.push({ cls:"warn", icon:"âš ", text:'Possivel Hazmat: contÃ©m "' + hazmat + '" â€” verificar restricoes FBA' });
+  } else {
+    alerts.push({ cls:"ok", icon:"âœ“", text:"Hazmat: Nenhum material perigoso detectado" });
+  }
+  const melt = MELTABLE_KEYWORDS.find(k => titleFull.includes(k));
+  if (melt) {
+    alerts.push({ cls:"warn", icon:"âš ", text:"Meltable: produto pode derreter â€” restricoes de armazenamento FBA" });
+  } else {
+    alerts.push({ cls:"ok", icon:"âœ“", text:"Meltable: Sem restricao de temperatura detectada" });
+  }
+  if (reviews > 500 && ratingNum < 3.5) {
+    alerts.push({ cls:"warn", icon:"âš ", text:"Avaliacao baixa (" + ratingNum.toFixed(1) + "/5) com muitas reviews â€” produto problematico" });
+  }
+  if (bsr && bsr > 300000) {
+    alerts.push({ cls:"warn", icon:"âš ", text:"BSR muito alto (#" + bsr.toLocaleString() + ") â€” produto de baixissima saida" });
+  }
+
+  document.getElementById("sa_alerts_grid").innerHTML = alerts.map(a =>
+    `<span class="sa-alert-tag ${a.cls}">${a.icon} ${a.text}</span>`
+  ).join("");
+
+  // --- KEEPA CHART ---
+  const keepaUrl = `https://graph.keepa.com/pricehistory.png?asin=${asin}&domain=com&amazon=1&new=1&used=1&salesrank=1&w=700&h=180`;
+  document.getElementById("sa_keepa_chart").src = keepaUrl;
+  document.getElementById("sa_keepa_links").innerHTML =
+    `<a href="https://keepa.com/#!product/1-${asin}" target="_blank" class="btn btn-outline" style="font-size:0.78rem;padding:5px 12px;">Ver no Keepa</a>
+     <a href="https://www.amazon.com/dp/${asin}" target="_blank" class="btn btn-secondary" style="font-size:0.78rem;padding:5px 12px;">Amazon.com</a>`;
+
+  // --- COMPETITION ANALYSIS ---
+  const roi = (amzPrice && supplierPrice && amzPrice > 0)
+    ? ((amzPrice - supplierPrice - amzPrice*0.15 - 3.68 - 1.86) / (supplierPrice + 1.86)) * 100 : 0;
+  document.getElementById("sa_comp_grid").innerHTML = `
+    <div class="sa-comp-item"><div class="sa-comp-item-label">ROI Estimado</div><div class="sa-comp-item-val" style="color:${roi>=30?"#2e7d32":roi>0?"#e65100":"#c62828"}">${roi.toFixed(0)}%</div></div>
+    <div class="sa-comp-item"><div class="sa-comp-item-label">BSR Score</div><div class="sa-comp-item-val">${bsrScore(bsr)}/35 pts</div></div>
+    <div class="sa-comp-item"><div class="sa-comp-item-label">Reviews</div><div class="sa-comp-item-val">${reviews > 0 ? reviews.toLocaleString() : "N/D"}</div></div>
+    <div class="sa-comp-item"><div class="sa-comp-item-label">Preco Amazon</div><div class="sa-comp-item-val">${amzPrice ? "$"+amzPrice.toFixed(2) : "N/D"}</div></div>
+    <div class="sa-comp-item"><div class="sa-comp-item-label">Preco Fornecedor</div><div class="sa-comp-item-val">${supplierPrice ? "$"+supplierPrice.toFixed(2) : "N/D"}</div></div>
+    <div class="sa-comp-item"><div class="sa-comp-item-label">Spread</div><div class="sa-comp-item-val" style="color:${(amzPrice&&supplierPrice&&amzPrice>supplierPrice)?"#2e7d32":"#c62828"}">${(amzPrice&&supplierPrice)?"$"+(amzPrice-supplierPrice).toFixed(2):"N/D"}</div></div>
+  `;
+
+  // --- DEAL SCORE ---
+  let score = 0;
+  score += bsrScore(bsr);
+  if (roi >= 30) score += 30; else if (roi >= 15) score += 18; else if (roi > 0) score += 8;
+  if (!ipBrand) score += 10; else score -= 20;
+  if (!hazmat) score += 10; else score -= 5;
+  if (sellersNum > 0 && sellersNum <= 5) score += 10; else if (sellersNum > 10) score -= 5;
+  if (ratingNum >= 4.0) score += 5;
+  if (bsr && bsr <= 50000) score += 5;
+  score = Math.max(0, Math.min(100, score));
+
+  const circle = document.getElementById("sa_score_circle");
+  const scoreEl = document.getElementById("sa_score_num");
+  scoreEl.textContent = score;
+  if (score >= 65)      { circle.className = "sa-score-circle green"; }
+  else if (score >= 40) { circle.className = "sa-score-circle yellow"; }
+  else                  { circle.className = "sa-score-circle red"; }
+
+  // --- VEREDICTO ---
+  const vBig = document.getElementById("sa_verdict_big");
+  const vSub = document.getElementById("sa_verdict_sub");
+  const finalRec = document.getElementById("sa_final_rec");
+  const finalTitle = document.getElementById("sa_final_title");
+  const finalItems = document.getElementById("sa_final_items");
+
+  const recItems = [];
+  if (bsr) recItems.push(`BSR #${bsr.toLocaleString()} â†’ est. ${salesEst || "?"} vendas/mes`);
+  if (amzPrice && supplierPrice) recItems.push(`Spread: $${(amzPrice - supplierPrice).toFixed(2)} (fornecedor $${supplierPrice.toFixed(2)} â†’ Amazon $${amzPrice.toFixed(2)})`);
+  if (ipBrand) recItems.push(`ATENCAO: Marca ${ipBrand.toUpperCase()} pode gerar IP complaint`);
+  if (hazmat) recItems.push(`Verificar se produto e aceito no FBA (possivel Hazmat)`);
+  recItems.push(`Clique em "Verificar Restricoes" para checar elegibilidade real na sua conta`);
+
+  if (score >= 65) {
+    vBig.textContent = "BOM NEGOCIO"; vBig.style.color = "#2e7d32";
+    vSub.textContent = `Score ${score}/100 â€” produto com bom potencial de revenda`;
+    finalRec.className = "sa-final-rec buy";
+    finalTitle.textContent = "âœ“ RECOMENDADO PARA COMPRA";
+  } else if (score >= 40) {
+    vBig.textContent = "AVALIAR COM CUIDADO"; vBig.style.color = "#e65100";
+    vSub.textContent = `Score ${score}/100 â€” produto aceitavel mas com pontos de atencao`;
+    finalRec.className = "sa-final-rec eval";
+    finalTitle.textContent = "âš  AVALIAR ANTES DE COMPRAR";
+  } else {
+    vBig.textContent = "RISCO ELEVADO"; vBig.style.color = "#c62828";
+    vSub.textContent = `Score ${score}/100 â€” produto com multiplos fatores negativos`;
+    finalRec.className = "sa-final-rec skip";
+    finalTitle.textContent = "âœ— NAO RECOMENDADO";
+  }
+
+  finalItems.innerHTML = "<ul>" + recItems.map(i => `<li>${i}</li>`).join("") + "</ul>";
+}
+
+// ===================== TAB NAVIGATION =====================
+function showTab(tab) {
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById("tab-" + tab).classList.add("active");
+  event.target.classList.add("active");
+}
+
+// ===================== SUPPLIERS DATA =====================
+const SUPPLIERS = [
+  // CASA & UTILIDADES DOMESTICAS
+  {
+    name: "Lifetime Brands",
+    url: "https://www.lifetimebrands.com",
+    badge: "usa", badgeLabel: "USA - Casa",
+    desc: "Maior distribuidora de utensilios domesticos dos EUA. Marcas: KitchenAid, Farberware, Cuisinart, Taylor. Excelente para Kitchen & Dining na Amazon.",
+    tags: ["Cozinha","KitchenAid","Cuisinart","Utensilios"],
+    stars: "★★★★★",
+    pros: ["Marcas tier 1","Invoice aceita Amazon","Distribuidor autorizado"],
+    cons: ["Aprovacao necessaria","MOQ por marca"]
+  },
+  {
+    name: "American Textile Company",
+    url: "https://www.americantextile.com",
+    badge: "usa", badgeLabel: "USA - Casa",
+    desc: "Fabricante e distribuidora de texteis domesticos: lencois, travesseiros, protetores de colchao. Forte em Home & Kitchen e Bedding na Amazon.",
+    tags: ["Bedding","Lencois","Travesseiros","Textil"],
+    stars: "★★★★☆",
+    pros: ["Fabricante direto","Boa margem","Entregas nacionais"],
+    cons: ["Foco em textil","MOQ moderado"]
+  },
+  {
+    name: "Spectrum Brands",
+    url: "https://www.spectrumbrands.com",
+    badge: "usa", badgeLabel: "USA - Casa/Pet",
+    desc: "Conglomerado com marcas lideres: Kwikset (fechaduras), Black+Decker (casa), Cutter (jardim/insetos), Dingo e 8in1 (pet). Multi-categoria top.",
+    tags: ["Black+Decker","Kwikset","Pet","Garden","Casa"],
+    stars: "★★★★★",
+    pros: ["Multi-categoria","Marcas tier 1","Distribuidor nacional"],
+    cons: ["Requer aprovacao por divisao","Volume minimo"]
+  },
+  {
+    name: "Jarden Consumer Solutions",
+    url: "https://www.jardencs.com",
+    badge: "usa", badgeLabel: "USA - Casa",
+    desc: "Distribuidora das marcas Mr. Coffee, Sunbeam, Oster, Holmes. Eletrodomesticos de pequeno porte — otima categoria na Amazon.",
+    tags: ["Mr. Coffee","Sunbeam","Oster","Eletrodomesticos"],
+    stars: "★★★★★",
+    pros: ["Marcas lideres","Alta demanda Amazon","Invoice oficial"],
+    cons: ["Aprovacao por marca","Estoque sazonal"]
+  },
+  {
+    name: "Prestige Brands Holdings",
+    url: "https://www.prestigebrandsholdings.com",
+    badge: "usa", badgeLabel: "USA - Casa/Saude",
+    desc: "Distribuidora de produtos de limpeza e saude domestica: Clear Eyes, Chloraseptic, Compound W. Bom para Health & Household Amazon.",
+    tags: ["Limpeza","OTC","Clear Eyes","Saude domestica"],
+    stars: "★★★★☆",
+    pros: ["Marcas reconhecidas","Alta rotatividade","Categoria popular"],
+    cons: ["Algumas categorias restritas Amazon","Requer conta B2B"]
+  },
+  // JARDINAGEM
+  {
+    name: "Scotts Miracle-Gro",
+    url: "https://www.scotts.com",
+    badge: "usa", badgeLabel: "USA - Jardim",
+    desc: "Maior distribuidora de produtos para jardim dos EUA. Marcas Scotts, Miracle-Gro, Ortho. Fertilizantes, sementes, controle de pragas — Lawn & Garden Amazon.",
+    tags: ["Jardim","Fertilizantes","Sementes","Scotts","Miracle-Gro"],
+    stars: "★★★★★",
+    pros: ["Lider absoluto em jardim","Alta demanda primavera/verao","Marcas top"],
+    cons: ["Sazonalidade alta","Alguns produtos Hazmat (pesticidas)"]
+  },
+  {
+    name: "Central Garden & Pet",
+    url: "https://www.central.com",
+    badge: "usa", badgeLabel: "USA - Jardim/Pet",
+    desc: "Uma das maiores distribuidoras de jardim E pet dos EUA. Marcas: Pennington (sementes), Amdro (controle pragas), Farnam (pet). Cobertura nacional.",
+    tags: ["Jardim","Pet","Sementes","Controle pragas","Pennington"],
+    stars: "★★★★★",
+    pros: ["Cobre jardim E pet","Marcas lideres","Rede nacional"],
+    cons: ["Produtos sazonais","Aprovacao B2B necessaria"]
+  },
+  {
+    name: "Ames True Temper",
+    url: "https://www.ames.com",
+    badge: "usa", badgeLabel: "USA - Jardim",
+    desc: "Maior fabricante de ferramentas de jardim dos EUA. Pas, enxadas, rastelos, carrinho de mao. Marcas True Temper, Razor-Back, Union Tools.",
+    tags: ["Ferramentas jardim","Pas","Rastelos","True Temper"],
+    stars: "★★★★☆",
+    pros: ["Fabricante direto","Boa margem","Marcas lideres USA"],
+    cons: ["Sazonalidade","Oversize para FBA (algumas pecas)"]
+  },
+  {
+    name: "Fiskars Group",
+    url: "https://www.fiskars.com/en-us",
+    badge: "usa", badgeLabel: "USA - Jardim/Casa",
+    desc: "Distribuidora de tesouras, ferramentas de jardim e utensilios. Marca Fiskars reconhecida globalmente. Podadeiras, tesouras, facas de jardim. Alta margem.",
+    tags: ["Fiskars","Tesouras","Podadeiras","Garden tools"],
+    stars: "★★★★★",
+    pros: ["Marca premium reconhecida","Boa margem","Multi-categoria"],
+    cons: ["Itens cortantes — restricao embalagem Amazon","Aprovacao necessaria"]
+  },
+  {
+    name: "Husqvarna Consumer Division",
+    url: "https://www.husqvarna.com/us",
+    badge: "usa", badgeLabel: "USA - Jardim",
+    desc: "Equipamentos de jardim: cortadores, sopradores, rocadeiras. Divisao de consumo aceita revendedores. Acessorios e pecas tem boa margem Amazon.",
+    tags: ["Cortador","Soprador","Jardim","Acessorios"],
+    stars: "★★★★☆",
+    pros: ["Marca premium","Acessorios alta margem","Distribuidor autorizado"],
+    cons: ["Equipamentos oversize","Requer conta dealer"]
+  },
+  // PET SHOP
+  {
+    name: "Phillips Pet Food & Supplies",
+    url: "https://www.phillipspet.com",
+    badge: "usa", badgeLabel: "USA - Pet",
+    desc: "Maior distribuidora independente de pet nos EUA. +30.000 produtos. Marcas: Kong, Nylabone, Blue Buffalo, Zymox. Ideal para Pet Supplies Amazon.",
+    tags: ["Pet","Kong","Nylabone","Blue Buffalo","Racao"],
+    stars: "★★★★★",
+    pros: ["Maior distribuidor pet USA","+30k produtos","Invoice aceita Amazon"],
+    cons: ["Requer conta comercial","MOQ moderado"]
+  },
+  {
+    name: "PetEdge",
+    url: "https://www.petedge.com",
+    badge: "usa", badgeLabel: "USA - Pet",
+    desc: "Atacadista de produtos para pet com +14.000 itens. Focado em revendedores e grooming. Aceita revendedores Amazon. Boa margem em acessorios e cuidados.",
+    tags: ["Pet","Grooming","Acessorios","Atacado"],
+    stars: "★★★★☆",
+    pros: ["+14k produtos","Aceita revendedores","Boa margem acessorios"],
+    cons: ["Menos marcas premium","Shipping pode ser lento"]
+  },
+  {
+    name: "Animal Supply Company",
+    url: "https://www.animalsupply.com",
+    badge: "usa", badgeLabel: "USA - Pet",
+    desc: "Distribuidora nacional de pet com cobertura em todos os estados. Marcas: Hill's, Royal Canin, Purina Pro Plan, Iams. Distribui para pet shops e revendedores.",
+    tags: ["Racao premium","Hill's","Royal Canin","Purina"],
+    stars: "★★★★★",
+    pros: ["Marcas premium pet","Cobertura nacional","Invoice reconhecida"],
+    cons: ["Racao perecivel — FBA restrito","Aprovacao rigorosa"]
+  },
+  {
+    name: "KONG Company",
+    url: "https://www.kongcompany.com",
+    badge: "usa", badgeLabel: "USA - Pet",
+    desc: "Fabricante direto dos brinquedos KONG — marca mais reconhecida em pet toys nos EUA. Vende diretamente para revendedores autorizados. Alta margem e giro.",
+    tags: ["KONG","Pet toys","Cao","Gato","Brinquedos"],
+    stars: "★★★★★",
+    pros: ["Marca #1 em pet toys","Alta margem","Fabricante direto"],
+    cons: ["Requer aprovacao como revendedor","Volume minimo por SKU"]
+  },
+  {
+    name: "Rolf C. Hagen Group",
+    url: "https://www.hagenusa.com",
+    badge: "usa", badgeLabel: "USA - Pet",
+    desc: "Fabricante e distribuidora de produtos para cao, gato, peixe, passaro e reptil. Marcas Hagen, Catit, Fluval, Trixie. Forte em aquarios e acessorios.",
+    tags: ["Aquario","Fluval","Catit","Pet acessorios"],
+    stars: "★★★★☆",
+    pros: ["Multi-especie","Marcas exclusivas","Distribuidor direto"],
+    cons: ["Aquarios oversize","Aprovacao necessaria"]
+  },
+  {
+    name: "Wholesale Pet USA",
+    url: "https://www.wholesalepet.com",
+    badge: "usa", badgeLabel: "USA - Pet",
+    desc: "Atacadista online de produtos pet focado em revendedores Amazon e eBay. Sem MOQ alto. Aceita pequenos revendedores. Boa entrada para iniciantes em pet.",
+    tags: ["Pet","Amazon seller","Sem MOQ alto","Revendedor"],
+    stars: "★★★☆☆",
+    pros: ["Aceita iniciantes","Sem MOQ alto","Facil cadastro"],
+    cons: ["Menos marcas premium","Precos menos competitivos"]
+  },
+  // MULTI-CATEGORIA (CASA + JARDIM + PET)
+  {
+    name: "Do it Best",
+    url: "https://www.doitbest.com",
+    badge: "usa", badgeLabel: "USA - Multi",
+    desc: "Cooperativa atacadista americana com +5.000 membros. Hardware, ferramentas, jardim, pet e casa. Aceita revendedores. Boa para Lawn & Garden + Home Improvement.",
+    tags: ["Hardware","Jardim","Casa","Multi-categoria"],
+    stars: "★★★★☆",
+    pros: ["Multi-categoria","Precos cooperativa","Rede nacional"],
+    cons: ["Requer filiacao","Processo de cadastro"]
+  },
+  {
+    name: "True Value Company",
+    url: "https://www.truevalue.com",
+    badge: "usa", badgeLabel: "USA - Multi",
+    desc: "Cooperativa atacadista de hardware e produtos domesticos. Ferramentas, jardim, eletrico, pet care. Presente em 50 estados com mais de 4.500 lojas.",
+    tags: ["Hardware","Jardim","Pet care","Casa","Ferramentas"],
+    stars: "★★★★☆",
+    pros: ["50 estados","Multi-categoria","Marcas nacionais"],
+    cons: ["Foco em hardware","Requer aprovacao como revendedor"]
+  },
+  {
+    name: "Overstock / Bed Bath Wholesale",
+    url: "https://www.overstock.com",
+    badge: "usa", badgeLabel: "USA - Casa",
+    desc: "Canal de liquidacao e atacado de produtos domesticos. Cama, banho, cozinha, decoracao. Excelente para encontrar marcas conhecidas com desconto para revenda.",
+    tags: ["Cama","Banho","Cozinha","Liquidacao","Decoracao"],
+    stars: "★★★☆☆",
+    pros: ["Marcas conhecidas","Precos de liquidacao","Variedade"],
+    cons: ["Estoque variavel","Sem garantia de reposicao"]
+  }
+];
+const PREP_CENTERS = [
+  {
+    name: "AMZ Prep",
+    url: "https://amzprep.com",
+    location: "Canada (BC, ON) + USA",
+    price: "A partir de $0,50/unid.",
+    intl: true,
+    full: true,
+    cheap: false,
+    desc: "Um dos mais recomendados para vendedores internacionais, incluindo brasileiros. Recebe mercadoria, inspeciona, etiqueta (FNSKU), embala e envia para FBA.",
+    tags: ["Etiquetagem FNSKU","Inspecao","Bundle","Fotografia"],
+    pros: ["Aceita internacionais","Preco justo","Servicos completos"],
+    cons: ["Prazo pode variar em picos"]
+  },
+  {
+    name: "MyFBAPrep",
+    url: "https://myfbaprep.com",
+    location: "USA (multiplos estados)",
+    price: "A partir de $0,25/unid.",
+    intl: true,
+    full: true,
+    cheap: true,
+    desc: "Rede de warehouses nos EUA. Interface moderna, dashboard de acompanhamento em tempo real. Aceita vendedores internacionais e oferece storage flexivel.",
+    tags: ["Dashboard","Multi-warehouse","FBA prep","Storage"],
+    pros: ["Preco baixo","Dashboard completo","Boa rede de warehouses"],
+    cons: ["Setup inicial pode ser complexo"]
+  },
+  {
+    name: "Fulfillment-Box",
+    url: "https://fulfillment-box.com",
+    location: "USA, UK, Alemanha, China",
+    price: "A partir de â‚¬0,40/unid.",
+    intl: true,
+    full: true,
+    cheap: false,
+    desc: "Prep center internacional com cobertura global. Especializado em vendedores europeus e de fora dos EUA. Excelente para quem vende em multiplos marketplaces.",
+    tags: ["Multi-pais","Europa","China","Reexpedicao"],
+    pros: ["Opera em varios paises","Aceita moedas internacionais","Multi-marketplace"],
+    cons: ["Preco um pouco acima da media","Interface em ingles/alemao"]
+  },
+  {
+    name: "ZonPrep",
+    url: "https://www.zonprep.com",
+    location: "Pennsylvania, USA",
+    price: "$0,50/unid. prep",
+    intl: true,
+    full: true,
+    cheap: false,
+    desc: "Prep center dedicado a vendedores Amazon FBA. Excelente atendimento ao cliente. Especialistas em requisitos da Amazon (poly bags, suffocation warnings, etc.).",
+    tags: ["FBA especializado","Poly bag","Bubble wrap","Atendimento"],
+    pros: ["Especialistas FBA","Bom atendimento","Conformidade Amazon"],
+    cons: ["Apenas 1 localizacao","Preco medio"]
+  },
+  {
+    name: "WestFBA",
+    url: "https://westfba.com",
+    location: "Los Angeles, CA, USA",
+    price: "$0,40-0,60/unid.",
+    intl: true,
+    full: false,
+    cheap: true,
+    desc: "Prep center no Oeste dos EUA (Los Angeles). Estrategicamente proximo ao porto para importacoes da Asia. Ideal para quem importa da China.",
+    tags: ["Importacao China","Porto LA","FBA prep","Rapido"],
+    pros: ["Proximo ao porto","Rapido para importados","Preco competitivo"],
+    cons: ["Menos servicos avancados","Sem cobertura nacional"]
+  },
+  {
+    name: "Prep Ninjas",
+    url: "https://prepninjas.com",
+    location: "New Jersey, USA",
+    price: "$0,45/unid.",
+    intl: true,
+    full: true,
+    cheap: true,
+    desc: "Prep center no nordeste dos EUA, proximo a grandes portos de importacao. Reconhecido por rapidez no processamento e bom custo-beneficio.",
+    tags: ["New Jersey","Rapidez","FBA","Bundle"],
+    pros: ["Preco justo","Processamento rapido","Boa localizacao"],
+    cons: ["Menor estrutura","Horario comercial restrito"]
+  },
+  {
+    name: "eFulfillment Service",
+    url: "https://www.efulfillmentservice.com",
+    location: "Michigan + Florida, USA",
+    price: "$0,50 + storage",
+    intl: true,
+    full: true,
+    cheap: false,
+    desc: "Servico completo de fulfillment e prep center. Aceita vendedores internacionais sem necessidade de LLC americana. Boa opcao para brasileiros iniciantes.",
+    tags: ["Sem LLC necessaria","FBA","DTC","Storage"],
+    pros: ["Aceita sem LLC","Completo","Bom suporte"],
+    cons: ["Custo de storage","Prazo de processamento 3-5 dias"]
+  },
+  {
+    name: "Red Stag Fulfillment",
+    url: "https://redstagfulfillment.com",
+    location: "Tennessee + Utah, USA",
+    price: "Variavel por tamanho",
+    intl: true,
+    full: true,
+    cheap: false,
+    desc: "Especializado em produtos pesados e de grande volume (oversize). Excelente para eletrodomesticos, moveis e itens bulky que saem do padrao FBA normal.",
+    tags: ["Oversize","Pesados","FBA oversize","Cuidado especial"],
+    pros: ["Especialista oversize","Seguro contra danos","Alta acuracia"],
+    cons: ["Mais caro para itens pequenos","Foco em oversize"]
+  },
+  {
+    name: "ShipBob",
+    url: "https://www.shipbob.com",
+    location: "USA, UK, Canada, Australia",
+    price: "Variavel",
+    intl: true,
+    full: true,
+    cheap: false,
+    desc: "Plataforma de fulfillment multi-canal com cobertura global. Integra com Amazon, Shopify, WooCommerce. Ideal para quem vende em multiplos canais alem da Amazon.",
+    tags: ["Multi-canal","Global","Shopify","API"],
+    pros: ["Cobertura global","Multi-canal","Tecnologia avancada"],
+    cons: ["Mais caro","Foco em DTC, nao so FBA"]
+  },
+  {
+    name: "Simple Global",
+    url: "https://simpleglobal.com",
+    location: "Los Angeles, CA, USA",
+    price: "A partir de $0,35/unid.",
+    intl: true,
+    full: true,
+    cheap: true,
+    desc: "Prep center e servico de reexpedicao proximo ao porto de LA. Muito usado por vendedores brasileiros e asiaticos. Recebe, confere, prepara e envia para Amazon FBA.",
+    tags: ["Reexpedicao","Brasil friendly","LA","FBA prep"],
+    pros: ["Muito usado por brasileiros","Preco baixo","Aceita internacionais"],
+    cons: ["Apenas LA","Pode ter fila em periodos de pico"]
+  },
+  {
+    name: "McKenzie Services",
+    url: "https://www.mckenziefinancial.com",
+    location: "Kentucky, USA",
+    price: "$0,50/unid.",
+    intl: false,
+    full: true,
+    cheap: false,
+    desc: "Prep center no centro dos EUA com excelente custo de transporte interno. Focado em revendedores Amazon experientes. Nao focado em internacionais.",
+    tags: ["Kentucky","FBA","Consolidacao","Amazon veteran"],
+    pros: ["Localizacao central USA","Preco previsivel","Experiencia"],
+    cons: ["Menos indicado para internacionais","Contato necessario"]
+  },
+  {
+    name: "Epic Prep Center",
+    url: "https://epicprepcenter.com",
+    location: "Texas, USA",
+    price: "$0,40/unid.",
+    intl: true,
+    full: true,
+    cheap: true,
+    desc: "Prep center no Texas, preco competitivo, aceita vendedores internacionais. Bom para quem importa via portos do Sul dos EUA ou Houston.",
+    tags: ["Texas","Preco baixo","Importacao","FBA"],
+    pros: ["Preco competitivo","Aceita internacionais","Localizacao Texas"],
+    cons: ["Menor nome no mercado","Menos reviews"]
+  }
+];
+
+// ===================== RENDER SUPPLIERS =====================
+function renderSuppliers(filter) {
+  const grid = document.getElementById("suppliersGrid");
+  const data = filter === "all" ? SUPPLIERS : SUPPLIERS.filter(s => {
+    if (filter === "br-rec") return ["amz prep","fulfillment-box","simple global","efulfillment service","b-stock","salehoo","alibaba"].some(n => s.name.toLowerCase().includes(n));
+    return s.badge === filter;
+  });
+  grid.innerHTML = data.map(s => `
+    <div class="supplier-card">
+      <div class="card-top">
+        <h4>${s.name}</h4>
+        <span class="badge ${s.badge}">${s.badgeLabel}</span>
+      </div>
+      <p class="desc">${s.desc}</p>
+      <div class="tags-row">${s.tags.map(t => `<span class="tag">${t}</span>`).join("")}</div>
+      <div class="pros-cons">
+        <ul class="pros">${s.pros.map(p => `<li>${p}</li>`).join("")}</ul>
+        <ul class="cons">${s.cons.map(c => `<li>${c}</li>`).join("")}</ul>
+      </div>
+      <div class="card-footer">
+        <span class="stars">${s.stars}</span>
+        <a href="${s.url}" target="_blank">Visitar site</a>
+      </div>
+    </div>
+  `).join("");
+}
+
+function filterSuppliers(filter, btn) {
+  document.querySelectorAll("#supplierFilters .filter-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  renderSuppliers(filter);
+}
+
+// ===================== RENDER PREP CENTERS =====================
+function renderPrep(filter) {
+  const grid = document.getElementById("prepGrid");
+  const data = filter === "all" ? PREP_CENTERS : PREP_CENTERS.filter(p => {
+    if (filter === "intl") return p.intl;
+    if (filter === "cheap") return p.cheap;
+    if (filter === "full") return p.full;
+    return true;
+  });
+  grid.innerHTML = data.map(p => `
+    <div class="supplier-card">
+      <div class="card-top">
+        <h4>${p.name}</h4>
+        ${p.intl ? '<span class="intl-badge">Aceita Internacionais</span>' : ''}
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <span class="location-tag">ðŸ“ ${p.location}</span>
+        <span class="price-badge">${p.price}</span>
+      </div>
+      <p class="desc">${p.desc}</p>
+      <div class="tags-row">${p.tags.map(t => `<span class="tag">${t}</span>`).join("")}</div>
+      <div class="pros-cons">
+        <ul class="pros">${p.pros.map(x => `<li>${x}</li>`).join("")}</ul>
+        <ul class="cons">${p.cons.map(x => `<li>${x}</li>`).join("")}</ul>
+      </div>
+      <div class="card-footer">
+        <span></span>
+        <a href="${p.url}" target="_blank">Visitar site</a>
+      </div>
+    </div>
+  `).join("");
+}
+
+function filterPrep(filter, btn) {
+  document.querySelectorAll("#prepFilters .filter-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  renderPrep(filter);
+}
+
+renderSuppliers("all");
+renderPrep("all");
+
+// ===================== TOOLS DATA =====================
+const TOOLS = [
+  {
+    name: "SellerAmp SAS",
+    url: "https://selleramp.com",
+    price: "A partir de $19.95/mes",
+    trial: "14 dias gratis (sem cartao)",
+    hasFree: false,
+    hasExt: true,
+    focus: ["oa"],
+    highlight: true,
+    desc: "Extensao Chrome + app mobile + web app. Analisa produto em tempo real com ROI, restricoes, alertas de IP, historico Keepa integrado e analise de storefront. Uma das melhores custo-beneficio para RA/OA/Wholesale.",
+    tags: ["Chrome","Mobile","RA","OA","Wholesale","Restricoes","ROI"],
+    pros: ["Preco justo","App mobile incluso","Alertas IP e Hazmat","Keepa integrado","Trial sem cartao"],
+    cons: ["Nao indicado para Private Label","Sem scan em massa"]
+  },
+  {
+    name: "Keepa",
+    url: "https://keepa.com",
+    price: "Gratis / â‚¬19/mes (Pro)",
+    trial: "Plano gratuito permanente",
+    hasFree: true,
+    hasExt: true,
+    focus: ["oa","pl"],
+    highlight: false,
+    desc: "Ferramenta essencial para qualquer vendedor Amazon. Historico de preco e BSR para mais de 5 bilhoes de produtos. Alertas de queda de preco e retorno ao estoque. Suporte a todos os marketplaces.",
+    tags: ["Chrome","Firefox","Historico preco","BSR","Alertas","API"],
+    pros: ["Plano gratuito","Dados historicos incomparaveis","Multi-marketplace","API disponivel"],
+    cons: ["Plano free limitado","Interface tecnica"]
+  },
+  {
+    name: "Helium 10",
+    url: "https://helium10.com",
+    price: "Gratis / $99/mes (Platinum)",
+    trial: "Plano gratuito permanente",
+    hasFree: true,
+    hasExt: true,
+    focus: ["pl","oa"],
+    highlight: false,
+    desc: "Suite mais completa do mercado. Inclui pesquisa de produto (Black Box), keywords (Cerebro/Magnet), otimizacao de listing, gestao de PPC, monitoramento de hijackers e dashboard de lucros.",
+    tags: ["Chrome","Private Label","Keywords","Listing","PPC","Profits"],
+    pros: ["Plano gratuito","Suite completa","Lider de mercado","Muitos recursos"],
+    cons: ["Caro nos planos completos","Curva de aprendizado alta","Excesso de funcionalidades para iniciantes"]
+  },
+  {
+    name: "Seller Assistant App",
+    url: "https://sellerassistant.app",
+    price: "A partir de $13.33/mes (anual)",
+    trial: "14 dias gratis",
+    hasFree: false,
+    hasExt: true,
+    focus: ["oa"],
+    highlight: false,
+    desc: "Extensao Chrome com dados completos: lucro, ROI, restricoes, BSR. Destaque para IP-Alert (detecta problemas de propriedade intelectual), Price List Analyzer (analisa planilhas de fornecedores wholesale) e VPN integrado.",
+    tags: ["Chrome","OA","Wholesale","IP-Alert","Price List","VPN"],
+    pros: ["Preco inicial baixo","IP-Alert exclusivo","Analise de listas wholesale","VPN incluso"],
+    cons: ["Menos conhecido que SellerAmp","Planos avancados sao caros"]
+  },
+  {
+    name: "BuyBotPro",
+    url: "https://buybotpro.com",
+    price: "A partir de $17.95/mes",
+    trial: "30 dias gratis",
+    hasFree: false,
+    hasExt: true,
+    focus: ["oa"],
+    highlight: false,
+    desc: "Analise automatizada de deals OA/RA com um clique. Inclui assistente de compra virtual, protecao contra suspensao, analise de listas wholesale e app mobile. Popular entre vendedores do Reino Unido.",
+    tags: ["Chrome","Mobile","OA","RA","Wholesale","Suspension Safeguard"],
+    pros: ["Trial 30 dias","Automacao de decisao","Suspension Safeguard","App mobile"],
+    cons: ["Interface menos intuitiva","Mais popular no UK"]
+  },
+  {
+    name: "RevSeller",
+    url: "https://revseller.com",
+    price: "$99.99/ano (unico plano)",
+    trial: "30 dias gratis (sem cartao)",
+    hasFree: false,
+    hasExt: true,
+    focus: ["oa"],
+    highlight: false,
+    desc: "Extensao Chrome simples e barata. Mostra lucro, ROI e fees FBA diretamente na pagina do produto Amazon. Bom para iniciantes em RA/OA. Suporta apenas EUA e Canada.",
+    tags: ["Chrome","RA","OA","Simples","Barato","USA/CA"],
+    pros: ["Muito barato ($8.33/mes)","Trial 30 dias sem cartao","Simples de usar"],
+    cons: ["Apenas USA e Canada","Sem scan em massa","Menos recursos que concorrentes"]
+  },
+  {
+    name: "Tactical Arbitrage",
+    url: "https://tacticalarbitrage.com",
+    price: "$69/mes (bundle Seller 365)",
+    trial: "14 dias gratis",
+    hasFree: false,
+    hasExt: false,
+    focus: ["oa"],
+    highlight: false,
+    desc: "Lider em OA automatizado. Escaneia mais de 1.000 sites varejistas vs Amazon em busca de oportunidades lucrativas. Suporta wholesale scan (upload de planilhas) e reverse sourcing. Ferramenta web, sem extensao Chrome.",
+    tags: ["Web app","OA automatizado","Scan em massa","Wholesale scan","+1000 sites"],
+    pros: ["Scan automatizado em escala","Wholesale scan poderoso","14 dias trial"],
+    cons: ["Sem extensao Chrome","Curva de aprendizado alta","Plataforma web apenas"]
+  },
+  {
+    name: "Jungle Scout",
+    url: "https://junglescout.com",
+    price: "A partir de $29/mes (anual)",
+    trial: "7 dias (garantia reembolso)",
+    hasFree: false,
+    hasExt: true,
+    focus: ["pl"],
+    highlight: false,
+    desc: "Referencia em pesquisa de produto para Private Label. Banco de dados com milhoes de produtos, estimativa de vendas, pesquisa de fornecedores, otimizacao de listing e rastreamento de keywords.",
+    tags: ["Chrome","Private Label","Keyword","Supplier DB","Sales Estimator"],
+    pros: ["Lider em Private Label","Supplier database","Interface limpa"],
+    cons: ["Caro","Pouco util para OA/RA","Trial com garantia, nao gratis"]
+  },
+  {
+    name: "Source Mogul",
+    url: "https://sourcemogul.com",
+    price: "A partir de $388/ano (~$32/mes)",
+    trial: "7 dias gratis",
+    hasFree: false,
+    hasExt: false,
+    focus: ["oa"],
+    highlight: false,
+    desc: "Alternativa mais acessivel ao Tactical Arbitrage. Escaneia varejistas online vs Amazon, calcula ROI e verifica restricoes de marca. Interface mais simples. Suporta mercados US e UK.",
+    tags: ["Web app","OA automatizado","USA","UK","Scan em massa"],
+    pros: ["Preco mais baixo que TA","Interface simples","7 dias trial"],
+    cons: ["Sem extensao Chrome","Menos sites que TA","Sem app mobile"]
+  },
+  {
+    name: "OAGenius Gravity",
+    url: "https://oagenius.com",
+    price: "$79/mes (solo) | $49/mes (bundle)",
+    trial: "$7 por 1 semana",
+    hasFree: false,
+    hasExt: true,
+    focus: ["oa"],
+    highlight: false,
+    desc: "Extensao Chrome focada em sourcing para dropshipping e OA. Escaneia centenas de fornecedores, calcula lucratividade e gera buy list exportavel. Suporta Amazon e Walmart.",
+    tags: ["Chrome","Dropshipping","OA","Walmart","Buy list","CSV"],
+    pros: ["Suporta Walmart","Buy list exportavel","Dropshipping especializado"],
+    cons: ["Preco alto","Foco em dropshipping","Trial pago ($7)"]
+  }
+];
+
+function renderTools(filter) {
+  const grid = document.getElementById("toolsGrid");
+  const data = filter === "all" ? TOOLS : TOOLS.filter(t => {
+    if (filter === "ext") return t.hasExt;
+    if (filter === "free") return t.hasFree;
+    if (filter === "oa") return t.focus.includes("oa");
+    if (filter === "pl") return t.focus.includes("pl");
+    return true;
+  });
+  grid.innerHTML = data.map(t => `
+    <div class="supplier-card" style="${t.highlight ? 'border:2px solid #ff9900;' : ''}">
+      <div class="card-top">
+        <h4>${t.name} ${t.highlight ? '<span style="font-size:0.7rem;color:#ff9900;font-weight:700;">DESTAQUE</span>' : ''}</h4>
+        <span class="price-badge">${t.hasExt ? 'Chrome' : 'Web'}</span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <span style="font-size:0.82rem;font-weight:700;color:#131921;">${t.price}</span>
+        <span style="font-size:0.75rem;color:#2e7d32;">${t.trial}</span>
+      </div>
+      <p class="desc">${t.desc}</p>
+      <div class="tags-row">${t.tags.map(tg => `<span class="tag">${tg}</span>`).join("")}</div>
+      <div class="pros-cons">
+        <ul class="pros">${t.pros.map(p => `<li>${p}</li>`).join("")}</ul>
+        <ul class="cons">${t.cons.map(c => `<li>${c}</li>`).join("")}</ul>
+      </div>
+      <div class="card-footer">
+        <span></span>
+        <a href="${t.url}" target="_blank">Visitar site</a>
+      </div>
+    </div>
+  `).join("");
+}
+
+function filterTools(filter, btn) {
+  document.querySelectorAll("#toolsFilters .filter-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  renderTools(filter);
+}
+
+renderTools("all");
+
+// ===================== CALCULADORA ROI =====================
+const FBA_FEES = {
+  small_standard: 3.06,
+  large_standard: 3.68,
+  small_oversize: 9.73,
+  medium_oversize: 19.05,
+  large_oversize: 89.98
+};
+
+const CATEGORY_FEES = {
+  "15": 15, "8": 8, "20": 20, "17": 17, "6": 8
+};
+
+function applySize() {
+  const sz = document.getElementById("c_size").value;
+  document.getElementById("c_fba_fee").value = FBA_FEES[sz].toFixed(2);
+  calcROI();
+}
+
+function applyCategory() {
+  const val = document.getElementById("c_category").value;
+  document.getElementById("c_referral_pct").value = val;
+  calcROI();
+}
+
+function fmt(n) {
+  return "$" + n.toFixed(2);
+}
+
+function bar(label, value, maxVal, color) {
+  const pct = maxVal > 0 ? Math.min(100, (value / maxVal) * 100) : 0;
+  return `<div class="chart-row">
+    <div class="chart-label">${label}</div>
+    <div class="chart-bar-wrap"><div class="chart-bar" style="width:${pct}%;background:${color};"></div></div>
+    <div class="chart-value">${fmt(value)}</div>
+  </div>`;
+}
+
+function calcROI() {
+  const price     = parseFloat(document.getElementById("c_price").value) || 0;
+  const refPct    = parseFloat(document.getElementById("c_referral_pct").value) || 0;
+  const closing   = parseFloat(document.getElementById("c_closing").value) || 0;
+  const fbaFee    = parseFloat(document.getElementById("c_fba_fee").value) || 0;
+  const storageU  = parseFloat(document.getElementById("c_storage").value) || 0;
+  const stockU    = parseFloat(document.getElementById("c_stock_units").value) || 1;
+  const monthlySales = parseFloat(document.getElementById("c_monthly_sales").value) || 1;
+  const cogs      = parseFloat(document.getElementById("c_cogs").value) || 0;
+  const freight   = parseFloat(document.getElementById("c_freight").value) || 0;
+  const prep      = parseFloat(document.getElementById("c_prep").value) || 0;
+  const inbound   = parseFloat(document.getElementById("c_fba_inbound").value) || 0;
+  const other     = parseFloat(document.getElementById("c_other").value) || 0;
+
+  const referralFee = price * (refPct / 100);
+  const storageCostPerUnit = (storageU * stockU) / Math.max(monthlySales, 1);
+  const totalAmazonFees = referralFee + closing + fbaFee + storageCostPerUnit;
+  const netAmazon = price - totalAmazonFees;
+  const totalMyCosts = cogs + freight + prep + inbound + other;
+  const profit = netAmazon - totalMyCosts;
+  const margin = price > 0 ? (profit / price) * 100 : 0;
+  const roi = totalMyCosts > 0 ? (profit / totalMyCosts) * 100 : 0;
+
+  const monthlyRev = price * monthlySales;
+  const monthlyFees = totalAmazonFees * monthlySales;
+  const monthlyCogs = totalMyCosts * monthlySales;
+  const monthlyProfit = profit * monthlySales;
+  const capital = cogs * stockU;
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+
+  set("r_price", fmt(price));
+  set("r_referral", fmt(referralFee));
+  set("r_closing", fmt(closing));
+  set("r_fba", fmt(fbaFee));
+  set("r_storage", fmt(storageCostPerUnit));
+  const netEl = document.getElementById("r_net_amazon");
+  if (netEl) { netEl.textContent = fmt(netAmazon); netEl.style.color = netAmazon >= 0 ? "#2e7d32" : "#c62828"; }
+  set("r_cogs", fmt(cogs));
+  set("r_freight", fmt(freight));
+  set("r_prep", fmt(prep));
+  set("r_inbound", fmt(inbound));
+  set("r_other", fmt(other));
+
+  const profitEl = document.getElementById("r_profit");
+  const marginEl = document.getElementById("r_margin");
+  const roiEl    = document.getElementById("r_roi");
+  if (profitEl) { profitEl.textContent = fmt(profit); profitEl.style.color = profit >= 0 ? "#2e7d32" : "#c62828"; }
+  if (marginEl) { marginEl.textContent = margin.toFixed(1) + "%"; marginEl.style.color = margin >= 15 ? "#2e7d32" : margin >= 0 ? "#e65100" : "#c62828"; }
+  if (roiEl)    { roiEl.textContent = roi.toFixed(1) + "%"; roiEl.style.color = roi >= 30 ? "#2e7d32" : roi >= 0 ? "#e65100" : "#c62828"; }
+
+  set("r_monthly_units", monthlySales);
+  set("r_monthly_rev", fmt(monthlyRev));
+  set("r_monthly_costs", fmt(monthlyFees + monthlyCogs));
+  const mpEl = document.getElementById("r_monthly_profit");
+  if (mpEl) { mpEl.textContent = fmt(monthlyProfit); mpEl.style.color = monthlyProfit >= 0 ? "#2e7d32" : "#c62828"; }
+  set("r_capital", fmt(capital));
+
+  const card = document.getElementById("calc_verdict_card");
+  const vtext = document.getElementById("calc_verdict_text");
+  const vsub = document.getElementById("calc_verdict_sub");
+  if (card && vtext && vsub) {
+    if (profit >= 3 && roi >= 30 && margin >= 15) {
+      card.className = "calc-result-card good";
+      vtext.textContent = "COMPRA RECOMENDADA";
+      vsub.textContent = `Lucro: ${fmt(profit)} | ROI: ${roi.toFixed(0)}% | Margem: ${margin.toFixed(0)}%`;
+    } else if (profit > 0 && roi >= 15) {
+      card.className = "calc-result-card ok";
+      vtext.textContent = "MARGEM ACEITAVEL";
+      vsub.textContent = `Lucro: ${fmt(profit)} | ROI: ${roi.toFixed(0)}% â€” Avalie o risco`;
+    } else if (profit > 0) {
+      card.className = "calc-result-card ok";
+      vtext.textContent = "LUCRO BAIXO";
+      vsub.textContent = `Lucro: ${fmt(profit)} | ROI: ${roi.toFixed(0)}% â€” Margem insuficiente`;
+    } else {
+      card.className = "calc-result-card bad";
+      vtext.textContent = "NAO RENTAVEL";
+      vsub.textContent = `Prejuizo: ${fmt(profit)} por unidade â€” Nao comprar`;
+    }
+  }
+
+  const maxBar = price;
+  const chart = document.getElementById("calc_chart");
+  if (chart) {
+    chart.innerHTML =
+      bar("Preco venda", price, maxBar, "#2e7d32") +
+      bar("Taxa Amazon", referralFee + closing, maxBar, "#c62828") +
+      bar("Taxa FBA", fbaFee + storageCostPerUnit, maxBar, "#e53935") +
+      bar("Custo produto", cogs, maxBar, "#1565c0") +
+      bar("Frete+Prep", freight + prep + inbound, maxBar, "#6a1b9a") +
+      bar("Outros", other, maxBar, "#546e7a") +
+      bar("LUCRO", Math.max(0, profit), maxBar, profit >= 0 ? "#ff9900" : "#bbb");
+  }
+}
+
+calcROI();
+
+// ===================== URL SEARCH =====================
+let urlSearchData = {};
+
+function setStatus(msg, type) {
+  const el = document.getElementById("urlStatus");
+  el.style.display = "flex";
+  el.className = "url-status " + type;
+  if (type === "loading") {
+    el.innerHTML = `<div class="url-spinner"></div><span>${msg}</span>`;
+  } else {
+    el.innerHTML = `<span>${msg}</span>`;
+  }
+}
+
+function extractPriceFromText(text) {
+  const m = text.match(/\$\s*(\d{1,4}(?:[.,]\d{1,2})?)/);
+  if (m) return parseFloat(m[1].replace(",", "."));
+  return null;
+}
+
+function extractTitleFromDoc(doc) {
+  const selectors = [
+    'h1[itemprop="name"]', 'h1.product-title', 'h1.pdp-title',
+    'h1[class*="title"]', 'h1[class*="name"]', 'h1[class*="product"]',
+    '[class*="product-name"] h1', '[class*="productName"]',
+    'meta[property="og:title"]', 'meta[name="twitter:title"]',
+    'h1', 'title'
+  ];
+  for (const sel of selectors) {
+    const el = doc.querySelector(sel);
+    if (el) {
+      const val = el.getAttribute("content") || el.textContent;
+      if (val && val.trim().length > 5) return val.trim().slice(0, 120);
+    }
+  }
+  return null;
+}
+
+function extractPriceFromDoc(doc) {
+  const selectors = [
+    '[itemprop="price"]', '[class*="price"] [class*="value"]',
+    '[class*="sale-price"]', '[class*="regular-price"]',
+    '[class*="product-price"]', '[class*="offer-price"]',
+    '[data-testid*="price"]', '.price', '#price', '[class*="Price"]'
+  ];
+  for (const sel of selectors) {
+    const el = doc.querySelector(sel);
+    if (el) {
+      const content = el.getAttribute("content") || el.textContent;
+      const price = extractPriceFromText(content || "");
+      if (price && price > 0.01 && price < 10000) return price;
+    }
+  }
+  return null;
+}
+
+async function searchByURL() {
+  const url = document.getElementById("supplierUrl").value.trim();
+  if (!url || !url.startsWith("http")) {
+    setStatus("Cole uma URL valida de produto (comecando com https://...)", "error");
+    return;
+  }
+
+  document.getElementById("urlSearchBtn").disabled = true;
+  document.getElementById("urlResult").style.display = "none";
+  urlSearchData = {};
+
+  try {
+    // PASSO 1: Buscar pagina do fornecedor
+    setStatus("Passo 1/3 â€” Buscando pagina do fornecedor...", "loading");
+    const html = await proxyFetch(url);
+    const doc = new DOMParser().parseFromString(html, "text/html");
+
+    const title = extractTitleFromDoc(doc);
+    if (!title) throw new Error("Nao foi possivel extrair o nome do produto desta pagina.");
+    const supplierPrice = extractPriceFromDoc(doc);
+
+    urlSearchData.title = title;
+    urlSearchData.supplierPrice = supplierPrice;
+
+    // PASSO 2: Buscar na Amazon
+    setStatus(`Passo 2/3 â€” Buscando "${title.slice(0,50)}..." na Amazon...`, "loading");
+    const searchQ = encodeURIComponent(title.slice(0, 80));
+    const amzHtml = await proxyFetch(`https://www.amazon.com/s?k=${searchQ}`);
+
+    const asinMatch = amzHtml.match(/data-asin="([A-Z0-9]{10})"/);
+    if (!asinMatch) throw new Error("Nenhum produto encontrado na Amazon. Tente refinar o nome do produto.");
+    const asin = asinMatch[1];
+    urlSearchData.asin = asin;
+
+    // PASSO 3: Dados do produto Amazon
+    setStatus(`Passo 3/3 â€” Obtendo dados do ASIN ${asin}...`, "loading");
+    const prodHtml = await proxyFetch(`https://www.amazon.com/dp/${asin}`);
+    const prodDoc = new DOMParser().parseFromString(prodHtml, "text/html");
+
+    const amzTitle = prodDoc.querySelector("#productTitle")?.textContent?.trim() || title;
+    const amzPriceEl = prodDoc.querySelector(".a-price .a-offscreen") ||
+                       prodDoc.querySelector("#priceblock_ourprice") ||
+                       prodDoc.querySelector(".a-price-whole");
+    const amzPriceRaw = amzPriceEl ? (amzPriceEl.getAttribute("content") || amzPriceEl.textContent) : "";
+    const amzPrice = extractPriceFromText(amzPriceRaw) || null;
+
+    const category = prodDoc.querySelector("#wayfinding-breadcrumbs_feature_div")?.textContent?.trim().replace(/\s+/g," ").slice(0,60)
+                  || prodDoc.querySelector(".a-breadcrumb")?.textContent?.trim().replace(/\s+/g," ").slice(0,60)
+                  || "Nao identificada";
+
+    const rating = prodDoc.querySelector("#acrPopover")?.textContent?.trim().slice(0,10) || "-";
+    const rank = prodDoc.querySelector("#SalesRank")?.textContent?.replace(/\s+/g," ").trim().slice(0,50) || "-";
+
+    urlSearchData = { ...urlSearchData, amzTitle, amzPrice, category, rating, rank, asin };
+
+    document.getElementById("ur_title").textContent = amzTitle.slice(0, 80);
+    document.getElementById("ur_supplier_price").textContent = supplierPrice ? `$${supplierPrice.toFixed(2)}` : "Nao detectado";
+    document.getElementById("ur_asin").textContent = asin;
+    document.getElementById("ur_amz_price").textContent = amzPrice ? `$${amzPrice.toFixed(2)}` : "Ver na Amazon";
+    document.getElementById("ur_category").textContent = category;
+    document.getElementById("ur_bsr").textContent = rating + " | " + rank.slice(0,30);
+    document.getElementById("ur_amz_link").href = amzProdUrl;
+    document.getElementById("ur_sc_link").href = `https://sellercentral.amazon.com/product-search/keywords?ref=xx_catadd_dnav_xx&q=${asin}`;
+
+    document.getElementById("urlResult").style.display = "block";
+    document.getElementById("urlStatus").style.display = "none";
+
+  } catch (err) {
+    setStatus("Erro: " + err.message, "error");
+  } finally {
+    document.getElementById("urlSearchBtn").disabled = false;
+  }
+}
+
+function fillCalcFromSearch() {
+  if (!urlSearchData.asin) return;
+  if (urlSearchData.amzPrice) document.getElementById("c_price").value = urlSearchData.amzPrice.toFixed(2);
+  if (urlSearchData.supplierPrice) document.getElementById("c_cogs").value = urlSearchData.supplierPrice.toFixed(2);
+
+  const cat = (urlSearchData.category || "").toLowerCase();
+  let refPct = 15;
+  if (cat.includes("jewelry") || cat.includes("joia")) refPct = 20;
+  else if (cat.includes("watch") || cat.includes("relogio")) refPct = 17;
+  else if (cat.includes("computer") || cat.includes("cell") || cat.includes("phone")) refPct = 8;
+  else if (cat.includes("auto") || cat.includes("car")) refPct = 8;
+  document.getElementById("c_referral_pct").value = refPct;
+
+  calcROI();
+  document.querySelector(".calc-wrapper").scrollIntoView({ behavior: "smooth", block: "start" });
+
+  const status = document.getElementById("urlStatus");
+  status.style.display = "flex";
+  status.className = "url-status step";
+  status.innerHTML = `<span>Calculadora preenchida com dados do ASIN <strong>${urlSearchData.asin}</strong>. Revise e ajuste os valores se necessario.</span>`;
+}
+</script>
+</body>
+</html>
