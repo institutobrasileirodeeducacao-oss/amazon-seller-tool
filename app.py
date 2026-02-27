@@ -1,4 +1,7 @@
 import os, json, sqlite3, bcrypt, stripe, ssl, gzip, urllib.request, urllib.parse, urllib.error
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from flask import Flask, render_template_string, request, redirect, url_for, session, jsonify, send_from_directory, Response
 from datetime import datetime, timedelta
 from functools import wraps
@@ -8,6 +11,10 @@ app.secret_key = os.environ.get("SECRET_KEY", "amazonsellertool2024xk9!")
 
 PORT = int(os.environ.get("PORT", 8080))
 DIR = os.path.dirname(os.path.abspath(__file__))
+
+ADMIN_EMAIL = "profgiseleenf@gmail.com"
+GMAIL_USER = os.environ.get("GMAIL_USER", "profgiseleenf@gmail.com")
+GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "")
 
 stripe.api_key = os.environ.get("STRIPE_SECRET_KEY", "")
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
@@ -44,15 +51,74 @@ def init_db():
                 email TEXT UNIQUE NOT NULL,
                 password TEXT NOT NULL,
                 plan TEXT DEFAULT 'free',
+                status TEXT DEFAULT 'pending',
                 stripe_customer_id TEXT,
                 stripe_subscription_id TEXT,
                 subscription_end TEXT,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        # Adiciona coluna status se nao existir (migracao)
+        try:
+            db.execute("ALTER TABLE users ADD COLUMN status TEXT DEFAULT 'pending'")
+        except Exception:
+            pass
         db.commit()
 
 init_db()
+
+def send_email(to, subject, html_body):
+    if not GMAIL_APP_PASSWORD:
+        print(f"[EMAIL] Para: {to} | Assunto: {subject}")
+        return
+    try:
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = subject
+        msg["From"] = GMAIL_USER
+        msg["To"] = to
+        msg.attach(MIMEText(html_body, "html"))
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+            smtp.login(GMAIL_USER, GMAIL_APP_PASSWORD)
+            smtp.sendmail(GMAIL_USER, to, msg.as_string())
+    except Exception as e:
+        print(f"[EMAIL ERROR] {e}")
+
+def notify_admin_new_user(user_id, name, email, plan, registered_at):
+    approve_url = f"{BASE_URL}/admin/approve/{user_id}"
+    reject_url  = f"{BASE_URL}/admin/reject/{user_id}"
+    html = f"""
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#0d1527;color:#e0e0e0;border-radius:12px;padding:32px">
+      <h2 style="color:#ff9900;margin-bottom:4px">Novo cadastro aguardando aprovacao</h2>
+      <p style="color:#78909c;margin-bottom:24px">Amazon Seller Tool</p>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:28px">
+        <tr><td style="padding:8px;color:#90caf9;width:120px">Nome</td><td style="padding:8px;color:#fff"><strong>{name}</strong></td></tr>
+        <tr style="background:#1a2744"><td style="padding:8px;color:#90caf9">E-mail</td><td style="padding:8px;color:#fff">{email}</td></tr>
+        <tr><td style="padding:8px;color:#90caf9">Plano</td><td style="padding:8px;color:#ff9900"><strong>{plan.upper()}</strong></td></tr>
+        <tr style="background:#1a2744"><td style="padding:8px;color:#90caf9">Data</td><td style="padding:8px;color:#fff">{registered_at}</td></tr>
+      </table>
+      <div style="display:flex;gap:16px">
+        <a href="{approve_url}" style="background:#2e7d32;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:700;font-size:16px;display:inline-block">APROVAR ACESSO</a>
+        <a href="{reject_url}" style="background:#b71c1c;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:700;font-size:16px;display:inline-block;margin-left:12px">REJEITAR</a>
+      </div>
+    </div>"""
+    send_email(ADMIN_EMAIL, f"[AmazonSellerTool] Novo usuario: {name} ({email})", html)
+
+def notify_user_approved(name, email):
+    html = f"""
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#0d1527;color:#e0e0e0;border-radius:12px;padding:32px;text-align:center">
+      <h2 style="color:#ff9900">Seu acesso foi aprovado!</h2>
+      <p style="color:#b0bec5;margin:16px 0">Ola, <strong style="color:#fff">{name}</strong>! Sua conta foi aprovada com sucesso.</p>
+      <a href="{BASE_URL}/login" style="background:#ff9900;color:#000;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:700;font-size:16px;display:inline-block;margin-top:8px">Acessar agora</a>
+    </div>"""
+    send_email(email, "[AmazonSellerTool] Acesso aprovado!", html)
+
+def notify_user_rejected(name, email):
+    html = f"""
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#0d1527;color:#e0e0e0;border-radius:12px;padding:32px;text-align:center">
+      <h2 style="color:#ef9a9a">Cadastro nao aprovado</h2>
+      <p style="color:#b0bec5;margin:16px 0">Ola, <strong style="color:#fff">{name}</strong>. Infelizmente seu cadastro nao foi aprovado.<br>Entre em contato: {ADMIN_EMAIL}</p>
+    </div>"""
+    send_email(email, "[AmazonSellerTool] Sobre seu cadastro", html)
 
 # ── AUTH HELPERS ──────────────────────────────────────────────────────────────
 def login_required(f):
@@ -330,7 +396,35 @@ p{color:#78909c;margin-bottom:40px;text-align:center}
 </body>
 </html>"""
 
-# ── ROUTES ────────────────────────────────────────────────────────────────────
+PENDING_HTML = """<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aguardando aprovacao</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0a0f1e;color:#e0e0e0;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.card{background:#0d1527;border:1px solid #1e2d4a;border-radius:16px;padding:48px 40px;width:100%;max-width:460px;text-align:center}
+.icon{font-size:56px;margin-bottom:20px}
+h2{color:#ff9900;font-size:26px;margin-bottom:12px}
+p{color:#90caf9;line-height:1.7;margin-bottom:8px}
+.sub{color:#546e7a;font-size:13px;margin-top:20px}
+a{color:#ff9900;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">&#9203;</div>
+  <h2>Cadastro enviado!</h2>
+  <p>Ola, <strong style="color:#fff">{{ name }}</strong>!</p>
+  <p>Seu cadastro foi recebido e esta aguardando <strong style="color:#ff9900">aprovacao manual</strong>.</p>
+  <p>Voce recebera um e-mail assim que seu acesso for liberado.</p>
+  <p class="sub">Duvidas? Fale com <a href="mailto:profgiseleenf@gmail.com">profgiseleenf@gmail.com</a></p>
+</div>
+</body>
+</html>"""
+
+# ── ROTAS ─────────────────────────────────────────────────────────────────────
 @app.route("/")
 def index():
     return render_template_string(LANDING_HTML)
@@ -342,11 +436,15 @@ def login_page():
         password = request.form.get("password","")
         with get_db() as db:
             user = db.execute("SELECT * FROM users WHERE email=?", (email,)).fetchone()
-        if user and bcrypt.checkpw(password.encode(), user["password"].encode()):
-            session["user_id"] = user["id"]
-            session["user_name"] = user["name"]
-            return redirect(url_for("tool"))
-        return render_template_string(LOGIN_HTML, error="E-mail ou senha incorretos.")
+        if not user or not bcrypt.checkpw(password.encode(), user["password"].encode()):
+            return render_template_string(LOGIN_HTML, error="E-mail ou senha incorretos.")
+        if user["status"] == "pending":
+            return render_template_string(LOGIN_HTML, error="Seu cadastro esta aguardando aprovacao. Voce recebera um e-mail quando for aprovado.")
+        if user["status"] == "rejected":
+            return render_template_string(LOGIN_HTML, error="Seu cadastro nao foi aprovado. Entre em contato: " + ADMIN_EMAIL)
+        session["user_id"] = user["id"]
+        session["user_name"] = user["name"]
+        return redirect(url_for("tool"))
     return render_template_string(LOGIN_HTML, error=None)
 
 @app.route("/register", methods=["GET","POST"])
@@ -362,22 +460,18 @@ def register_page():
         pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
         try:
             with get_db() as db:
-                db.execute("INSERT INTO users (name,email,password,plan) VALUES (?,?,?,'free')", (name, email, pw_hash))
+                db.execute("INSERT INTO users (name,email,password,plan,status) VALUES (?,?,?,'free','pending')", (name, email, pw_hash))
                 db.commit()
                 user = db.execute("SELECT * FROM users WHERE email=?", (email,)).fetchone()
             session["user_id"] = user["id"]
             session["user_name"] = user["name"]
             session["pending_plan"] = plan
+            # Notifica admin por e-mail
+            notify_admin_new_user(user["id"], name, email, plan, user["created_at"])
         except sqlite3.IntegrityError:
             return render_template_string(REGISTER_HTML, error="Este e-mail ja esta cadastrado.", plan=plan, plan_label=plan_label)
-        if stripe.api_key:
-            return redirect(url_for("create_checkout") + f"?plan={plan}")
-        else:
-            with get_db() as db:
-                end = (datetime.utcnow() + timedelta(days=7)).isoformat()
-                db.execute("UPDATE users SET plan='trial',subscription_end=? WHERE id=?", (end, session["user_id"]))
-                db.commit()
-            return redirect(url_for("tool"))
+        # Mostra pagina de aguardo
+        return render_template_string(PENDING_HTML, name=name)
     return render_template_string(REGISTER_HTML, error=None, plan=plan, plan_label=plan_label)
 
 @app.route("/logout")
@@ -474,6 +568,40 @@ def proxy():
         return jsonify({"error": f"BLOCKED:{e.code}", "blocked": blocked})
     except Exception as e:
         return jsonify({"error": str(e)})
+
+@app.route("/admin/approve/<int:user_id>")
+def admin_approve(user_id):
+    with get_db() as db:
+        user = db.execute("SELECT * FROM users WHERE id=?", (user_id,)).fetchone()
+        if not user:
+            return "Usuario nao encontrado.", 404
+        plan = session.get("pending_plan", "monthly")
+        end = (datetime.utcnow() + timedelta(days=30)).isoformat()
+        db.execute("UPDATE users SET status='approved',plan='active',subscription_end=? WHERE id=?", (end, user_id))
+        db.commit()
+    notify_user_approved(user["name"], user["email"])
+    return f"""<html><body style="font-family:Arial;background:#0a0f1e;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;margin:0">
+    <div style="text-align:center;background:#0d1527;padding:40px;border-radius:12px;border:1px solid #2e7d32">
+    <h2 style="color:#81c784">Acesso APROVADO!</h2>
+    <p style="color:#90caf9;margin:12px 0">Usuario: <strong>{user['name']}</strong> ({user['email']})</p>
+    <p style="color:#546e7a;font-size:13px">E-mail de confirmacao enviado ao usuario.</p>
+    </div></body></html>"""
+
+@app.route("/admin/reject/<int:user_id>")
+def admin_reject(user_id):
+    with get_db() as db:
+        user = db.execute("SELECT * FROM users WHERE id=?", (user_id,)).fetchone()
+        if not user:
+            return "Usuario nao encontrado.", 404
+        db.execute("UPDATE users SET status='rejected' WHERE id=?", (user_id,))
+        db.commit()
+    notify_user_rejected(user["name"], user["email"])
+    return f"""<html><body style="font-family:Arial;background:#0a0f1e;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;margin:0">
+    <div style="text-align:center;background:#0d1527;padding:40px;border-radius:12px;border:1px solid #b71c1c">
+    <h2 style="color:#ef9a9a">Cadastro REJEITADO</h2>
+    <p style="color:#90caf9;margin:12px 0">Usuario: <strong>{user['name']}</strong> ({user['email']})</p>
+    <p style="color:#546e7a;font-size:13px">E-mail de notificacao enviado ao usuario.</p>
+    </div></body></html>"""
 
 if __name__ == "__main__":
     print(f"Servidor iniciado na porta {PORT}")
