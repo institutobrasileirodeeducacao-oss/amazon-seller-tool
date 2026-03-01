@@ -4,347 +4,162 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SellerPro — Ferramenta para Vendedores Amazon USA</title>
-<meta name="description" content="Encontre produtos lucrativos para vender na Amazon USA. Calcule taxas FBA, verifique elegibilidade e analise fornecedores em segundos.">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0f1e;color:#e0e0e0;overflow-x:hidden}
+body{font-family:'Segoe UI',sans-serif;background:#0a0f1e;color:#e0e0e0}
 
-/* TOPO URGÊNCIA */
-.urgency-bar{background:#ff9900;color:#000;text-align:center;padding:10px 20px;font-size:14px;font-weight:700;letter-spacing:.3px}
-.urgency-bar span{background:#000;color:#ff9900;padding:2px 8px;border-radius:4px;margin:0 6px;font-size:13px}
+.topbar{background:#ff9900;text-align:center;padding:10px;font-size:14px;font-weight:700;color:#000}
 
-/* HERO */
-.hero{background:radial-gradient(ellipse at 50% -20%,#1e2f55 0%,#0a0f1e 65%);padding:60px 20px 50px;text-align:center}
-.hero-eyebrow{color:#ff9900;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:20px}
-.hero h1{font-size:48px;font-weight:900;color:#fff;line-height:1.15;max-width:820px;margin:0 auto 20px}
-.hero h1 em{color:#ff9900;font-style:normal}
-.hero h1 u{text-decoration:underline;text-decoration-color:#ff9900}
-.hero-sub{font-size:20px;color:#90caf9;max-width:600px;margin:0 auto 36px;line-height:1.6}
-.cta-wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
-.btn-cta{display:inline-block;background:#ff9900;color:#000;font-size:22px;font-weight:900;padding:20px 52px;border-radius:12px;box-shadow:0 0 50px #ff990066;cursor:pointer;border:none;text-decoration:none;transition:.2s;letter-spacing:.5px}
-.btn-cta:hover{background:#ffb347;transform:translateY(-3px);box-shadow:0 0 70px #ff990099}
-.cta-micro{color:#546e7a;font-size:13px}
-.cta-micro span{color:#81c784}
+.hero{text-align:center;padding:70px 20px 50px;background:radial-gradient(ellipse at 50% 0%,#162040,#0a0f1e 70%)}
+.tag{display:inline-block;background:#ff990022;border:1px solid #ff990055;color:#ff9900;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;margin-bottom:22px;letter-spacing:1px;text-transform:uppercase}
+h1{font-size:44px;font-weight:900;color:#fff;max-width:740px;margin:0 auto 18px;line-height:1.2}
+h1 span{color:#ff9900}
+.hero-desc{font-size:18px;color:#90caf9;max-width:540px;margin:0 auto 36px;line-height:1.6}
+.btn{display:inline-block;background:#ff9900;color:#000;font-size:20px;font-weight:900;padding:18px 48px;border-radius:10px;text-decoration:none;box-shadow:0 0 40px #ff990055;transition:.2s}
+.btn:hover{background:#ffb347;transform:translateY(-2px)}
+.hero-micro{color:#546e7a;font-size:13px;margin-top:12px}
+.hero-micro span{color:#81c784}
 
-/* VIDEO / MOCKUP */
-.mockup-section{padding:0 20px 60px;text-align:center}
-.mockup-box{max-width:860px;margin:0 auto;background:#0d1527;border:1px solid #1e2d4a;border-radius:16px;overflow:hidden;box-shadow:0 20px 80px #00000066}
-.mockup-bar{background:#1a2744;padding:12px 16px;display:flex;align-items:center;gap:8px}
-.dot{width:12px;height:12px;border-radius:50%}
-.mockup-url{background:#0a0f1e;color:#546e7a;font-size:12px;padding:5px 12px;border-radius:4px;flex:1;text-align:left}
-.mockup-inner{padding:28px;display:grid;grid-template-columns:1fr 1fr;gap:20px;text-align:left}
-.mock-card{background:#0a0f1e;border:1px solid #1e2d4a;border-radius:10px;padding:20px}
-.mock-label{color:#546e7a;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
-.mock-value{color:#ff9900;font-size:28px;font-weight:900}
-.mock-sub{color:#81c784;font-size:12px;margin-top:4px}
-.mock-score{font-size:48px;font-weight:900;color:#81c784;line-height:1}
-.mock-bar-wrap{margin-top:8px}
-.mock-bar-track{background:#1a2744;border-radius:4px;height:8px;margin-bottom:4px}
-.mock-bar-fill{background:linear-gradient(90deg,#ff9900,#81c784);height:8px;border-radius:4px}
-.mock-tag{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;margin-right:4px}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:900px;margin:0 auto;padding:60px 20px}
+.feat{background:#0d1527;border:1px solid #1e2d4a;border-radius:12px;padding:26px 22px;text-align:center}
+.feat-icon{font-size:36px;margin-bottom:12px}
+.feat h3{color:#fff;font-size:16px;margin-bottom:6px}
+.feat p{color:#78909c;font-size:13px;line-height:1.6}
 
-/* BENEFICIOS */
-.benefits{padding:70px 20px;max-width:1000px;margin:0 auto}
-.section-label{color:#ff9900;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:2px;text-align:center;margin-bottom:12px}
-.section-title{font-size:36px;font-weight:900;color:#fff;text-align:center;margin-bottom:8px;line-height:1.2}
-.section-sub{color:#78909c;text-align:center;font-size:16px;margin-bottom:48px}
-.benefits-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-.benefit{background:#0d1527;border:1px solid #1e2d4a;border-radius:14px;padding:28px;display:flex;gap:18px;align-items:flex-start;transition:.2s}
-.benefit:hover{border-color:#ff990044;transform:translateY(-2px)}
-.benefit-icon{font-size:36px;flex-shrink:0;line-height:1}
-.benefit h3{color:#fff;font-size:17px;margin-bottom:6px}
-.benefit p{color:#78909c;font-size:14px;line-height:1.7}
+.price-section{background:#0d1527;border-top:1px solid #1e2d4a;border-bottom:1px solid #1e2d4a;padding:60px 20px;text-align:center}
+.price-card{background:#0a0f1e;border:2px solid #ff9900;border-radius:18px;max-width:420px;margin:0 auto;padding:40px 32px;box-shadow:0 0 60px #ff990033}
+.price-name{color:#fff;font-size:20px;font-weight:700;margin-bottom:16px}
+.price-from{color:#546e7a;font-size:14px;text-decoration:line-through;margin-bottom:4px}
+.price-val{font-size:72px;font-weight:900;color:#ff9900;line-height:1}
+.price-val sup{font-size:26px;vertical-align:top;margin-top:12px;display:inline-block}
+.price-type{color:#81c784;font-size:15px;font-weight:700;margin:8px 0 24px}
+.price-items{list-style:none;text-align:left;border-top:1px solid #1e2d4a;padding-top:20px;margin-bottom:28px}
+.price-items li{padding:8px 0;color:#b0bec5;font-size:14px;display:flex;gap:10px}
+.price-items li::before{content:"✓";color:#81c784;font-weight:700;flex-shrink:0}
+.buy-btn{display:block;width:100%;background:#ff9900;color:#000;border:none;padding:16px;border-radius:10px;font-size:18px;font-weight:900;cursor:pointer;text-decoration:none;transition:.2s}
+.buy-btn:hover{background:#ffb347}
+.guarantee{color:#81c784;font-size:13px;margin-top:14px}
 
-/* PROVA SOCIAL */
-.social-proof{background:#0d1527;border-top:1px solid #1e2d4a;border-bottom:1px solid #1e2d4a;padding:70px 20px;text-align:center}
-.stats{display:flex;justify-content:center;gap:60px;flex-wrap:wrap;margin-bottom:52px}
-.stat-num{font-size:52px;font-weight:900;color:#ff9900;line-height:1}
-.stat-label{color:#78909c;font-size:14px;margin-top:4px}
-.testis{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1000px;margin:0 auto}
-.testi{background:var(--dark,#0a0f1e);border:1px solid #1e2d4a;border-radius:14px;padding:26px;text-align:left}
-.testi-stars{color:#ff9900;font-size:16px;margin-bottom:10px}
-.testi-text{color:#b0bec5;font-size:14px;line-height:1.7;margin-bottom:16px;font-style:italic}
-.testi-author{display:flex;align-items:center;gap:10px}
-.avatar{width:40px;height:40px;border-radius:50%;background:#1e2d4a;display:flex;align-items:center;justify-content:center;font-weight:700;color:#ff9900}
-.author-name{color:#fff;font-weight:600;font-size:14px}
-.author-city{color:#546e7a;font-size:12px}
+.faq{max-width:620px;margin:0 auto;padding:60px 20px}
+.faq h2{color:#fff;font-size:26px;font-weight:800;text-align:center;margin-bottom:28px}
+.faq-item{background:#0d1527;border:1px solid #1e2d4a;border-radius:10px;margin-bottom:10px;overflow:hidden}
+.faq-q{padding:15px 18px;cursor:pointer;color:#fff;font-size:14px;font-weight:600;display:flex;justify-content:space-between}
+.faq-a{padding:14px 18px;color:#78909c;font-size:13px;line-height:1.7;border-top:1px solid #1e2d4a;display:none}
 
-/* OFERTA */
-.offer{padding:80px 20px;text-align:center;background:radial-gradient(ellipse at 50% 50%,#1a2744 0%,#0a0f1e 70%)}
-.offer-card{background:#0d1527;border:2px solid #ff9900;border-radius:20px;max-width:520px;margin:0 auto;padding:48px 40px;box-shadow:0 0 80px #ff990033;position:relative}
-.offer-ribbon{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:#ff9900;color:#000;font-size:12px;font-weight:900;padding:8px 24px;border-radius:0 0 12px 12px;letter-spacing:1px;text-transform:uppercase}
-.offer-title{color:#fff;font-size:22px;font-weight:700;margin-bottom:24px;margin-top:10px}
-.price-block{margin-bottom:8px}
-.price-from{color:#546e7a;font-size:15px;text-decoration:line-through}
-.price-big{font-size:80px;font-weight:900;color:#ff9900;line-height:1}
-.price-big sup{font-size:30px;vertical-align:top;margin-top:14px;display:inline-block}
-.price-once{color:#81c784;font-size:16px;font-weight:700;margin-bottom:28px}
-.offer-list{list-style:none;text-align:left;margin-bottom:32px;border-top:1px solid #1e2d4a;padding-top:24px}
-.offer-list li{padding:9px 0;color:#b0bec5;font-size:14px;border-bottom:1px solid #1e2d4a;display:flex;gap:10px;align-items:center}
-.offer-list li:last-child{border-bottom:none}
-.offer-list li::before{content:"✓";color:#81c784;font-weight:900;font-size:16px;flex-shrink:0}
-.btn-offer{display:block;width:100%;background:#ff9900;color:#000;border:none;border-radius:10px;font-size:20px;font-weight:900;padding:18px;cursor:pointer;box-shadow:0 0 40px #ff990055;transition:.2s;text-decoration:none}
-.btn-offer:hover{background:#ffb347;transform:translateY(-2px)}
-.guarantee-box{display:flex;align-items:center;gap:12px;background:#0f2211;border:1px solid #2e7d32;border-radius:10px;padding:14px 16px;margin-top:20px}
-.guarantee-box p{color:#81c784;font-size:13px;line-height:1.5}
+.cta-footer{padding:60px 20px;text-align:center}
+.cta-footer h2{color:#fff;font-size:32px;font-weight:900;margin-bottom:12px}
+.cta-footer h2 span{color:#ff9900}
+.cta-footer p{color:#90caf9;margin-bottom:28px}
 
-/* FAQ SIMPLES */
-.faq-simple{max-width:680px;margin:0 auto;padding:70px 20px}
-.faq-item{border:1px solid #1e2d4a;border-radius:10px;margin-bottom:10px;overflow:hidden;background:#0d1527}
-.faq-q{padding:16px 20px;cursor:pointer;font-weight:600;color:#fff;font-size:15px;display:flex;justify-content:space-between;align-items:center}
-.faq-a{padding:14px 20px;color:#78909c;font-size:14px;line-height:1.7;border-top:1px solid #1e2d4a;display:none}
+footer{padding:18px;text-align:center;color:#37474f;font-size:12px;border-top:1px solid #1e2d4a}
+footer a{color:#ff9900;text-decoration:none}
 
-/* CTA FINAL */
-.cta-final{padding:70px 20px;text-align:center;background:#0d1527;border-top:1px solid #1e2d4a}
-.cta-final h2{font-size:38px;font-weight:900;color:#fff;max-width:640px;margin:0 auto 16px;line-height:1.2}
-.cta-final h2 span{color:#ff9900}
-.cta-final p{color:#90caf9;font-size:17px;margin-bottom:32px}
-
-footer{padding:20px;text-align:center;color:#37474f;font-size:12px;border-top:1px solid #1e2d4a}
-
-@media(max-width:680px){
-  .hero h1{font-size:30px}
-  .benefits-grid,.testis{grid-template-columns:1fr}
-  .mockup-inner{grid-template-columns:1fr}
-  .stats{gap:30px}
-  .offer-card{padding:36px 20px}
-  .price-big{font-size:64px}
-  nav{padding:12px 16px}
+@media(max-width:640px){
+  h1{font-size:28px}
+  .features{grid-template-columns:1fr}
+  .price-val{font-size:56px}
 }
 </style>
 </head>
 <body>
 
-<!-- BARRA URGÊNCIA -->
-<div class="urgency-bar">
-  🔥 OFERTA DE LANÇAMENTO — <span>R$97</span> pagamento único · Vagas limitadas
+<div class="topbar">🔥 LANÇAMENTO — R$97 pagamento único · Sem mensalidade</div>
+
+<section class="hero">
+  <div class="tag">&#9670; SellerPro · Amazon USA</div>
+  <h1>Analise produtos e <span>calcule seu lucro</span> antes de comprar</h1>
+  <p class="hero-desc">Cole a URL do fornecedor, veja o produto na Amazon, calcule as taxas FBA e descubra se vale a pena — em 30 segundos.</p>
+  <a href="https://wa.me/5533991101426?text=Ol%C3%A1%21+Quero+o+SellerPro+por+R%2497" class="btn" target="_blank">Quero o SellerPro por R$97 →</a>
+  <p class="hero-micro"><span>✓</span> Pagamento único &nbsp;·&nbsp; <span>✓</span> Sem mensalidade &nbsp;·&nbsp; <span>✓</span> Garantia 7 dias</p>
+</section>
+
+<div class="features">
+  <div class="feat">
+    <div class="feat-icon">🔍</div>
+    <h3>Busca por URL</h3>
+    <p>Cole o link do produto no fornecedor e o SellerPro localiza automaticamente na Amazon.</p>
+  </div>
+  <div class="feat">
+    <div class="feat-icon">📊</div>
+    <h3>Calculadora FBA</h3>
+    <p>Veja taxas, margem e ROI real antes de comprar. Preenchimento automático.</p>
+  </div>
+  <div class="feat">
+    <div class="feat-icon">🏆</div>
+    <h3>Deal Score</h3>
+    <p>Score 0–100 com alerta de marca IP, Hazmat e análise de BSR e concorrência.</p>
+  </div>
+  <div class="feat">
+    <div class="feat-icon">📈</div>
+    <h3>Gráfico Keepa</h3>
+    <p>Histórico de preço e rank dos últimos 12 meses integrado na ferramenta.</p>
+  </div>
+  <div class="feat">
+    <div class="feat-icon">✅</div>
+    <h3>Elegibilidade</h3>
+    <p>Link direto para verificar se você pode vender o produto na sua conta Amazon.</p>
+  </div>
+  <div class="feat">
+    <div class="feat-icon">🏭</div>
+    <h3>Fornecedores USA</h3>
+    <p>20+ distribuidoras americanas de casa, jardim e pet — com links e avaliações.</p>
+  </div>
 </div>
 
-<!-- HERO -->
-<section class="hero">
-  <p class="hero-eyebrow">&#9670; Ferramenta para Vendedores Amazon USA</p>
-  <h1>Descubra se um produto é <em>lucrativo</em> antes de gastar <u>um centavo</u></h1>
-  <p class="hero-sub">Cole a URL do fornecedor, veja o produto na Amazon, calcule as taxas FBA e saiba o lucro real — em menos de 30 segundos.</p>
-  <div class="cta-wrap">
-    <a href="https://wa.me/5533991101426?text=Ol%C3%A1%21+Quero+acessar+o+SellerPro+por+R%2497" class="btn-cta" target="_blank">
-      Quero o SellerPro por R$97 &#8594;
-    </a>
-    <p class="cta-micro"><span>✓</span> Pagamento único &nbsp;·&nbsp; <span>✓</span> Sem mensalidade &nbsp;·&nbsp; <span>✓</span> Garantia 7 dias</p>
-  </div>
-</section>
-
-<!-- MOCKUP DA FERRAMENTA -->
-<section class="mockup-section">
-  <div class="mockup-box">
-    <div class="mockup-bar">
-      <div class="dot" style="background:#ef5350"></div>
-      <div class="dot" style="background:#ff9900"></div>
-      <div class="dot" style="background:#81c784"></div>
-      <div class="mockup-url">sellerpro.onrender.com/tool</div>
-    </div>
-    <div class="mockup-inner">
-      <div class="mock-card">
-        <div class="mock-label">Produto encontrado na Amazon</div>
-        <div style="color:#fff;font-size:14px;margin-bottom:12px;line-height:1.5">Crayola Broad Tip Markers 10 Count — Pack</div>
-        <div class="mock-label">Preco Amazon</div>
-        <div class="mock-value">$12.99</div>
-        <div class="mock-sub">BSR #1.204 em Office Products</div>
-        <div style="margin-top:12px">
-          <span class="mock-tag" style="background:#0f2211;color:#81c784;border:1px solid #2e7d32">✓ Elegível</span>
-          <span class="mock-tag" style="background:#1a0a0a;color:#ef9a9a;border:1px solid #3d1515">⚠ Verificar IP</span>
-        </div>
-      </div>
-      <div class="mock-card">
-        <div class="mock-label">Deal Score</div>
-        <div class="mock-score">74</div>
-        <div class="mock-bar-wrap">
-          <div class="mock-bar-track"><div class="mock-bar-fill" style="width:74%"></div></div>
-        </div>
-        <div style="color:#78909c;font-size:12px;margin-top:8px">Bom deal · Vale analisar</div>
-        <div style="margin-top:14px">
-          <div class="mock-label">Calculadora FBA</div>
-          <div style="display:flex;justify-content:space-between;margin-top:6px">
-            <span style="color:#78909c;font-size:12px">Margem</span><span style="color:#81c784;font-weight:700">28.4%</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;margin-top:4px">
-            <span style="color:#78909c;font-size:12px">ROI</span><span style="color:#81c784;font-weight:700">39.7%</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;margin-top:4px">
-            <span style="color:#78909c;font-size:12px">Lucro/un.</span><span style="color:#ff9900;font-weight:700">$3.69</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- BENEFÍCIOS -->
-<section class="benefits">
-  <p class="section-label">O que o SellerPro faz por você</p>
-  <h2 class="section-title">Tudo que você precisa em uma ferramenta</h2>
-  <p class="section-sub">Pare de usar 5 ferramentas diferentes. O SellerPro integra tudo.</p>
-  <div class="benefits-grid">
-    <div class="benefit">
-      <div class="benefit-icon">🔍</div>
-      <div>
-        <h3>Busca automática por URL</h3>
-        <p>Cole a URL do produto no Walmart, DollarDays, Vitacost ou qualquer fornecedor USA. O SellerPro localiza o produto na Amazon e extrai ASIN, preço e BSR automaticamente.</p>
-      </div>
-    </div>
-    <div class="benefit">
-      <div class="benefit-icon">📊</div>
-      <div>
-        <h3>Calculadora FBA pré-preenchida</h3>
-        <p>O preço de compra e o preço Amazon já aparecem na calculadora. Só ajuste os valores e veja na hora: taxa de referência, fulfillment, prep, margem e ROI.</p>
-      </div>
-    </div>
-    <div class="benefit">
-      <div class="benefit-icon">🏆</div>
-      <div>
-        <h3>Deal Score automático</h3>
-        <p>Um número de 0 a 100 que avalia BSR, margem, concorrência, alertas de marca (IP Alert) e risco Hazmat. Sabe em segundos se o produto vale ou não.</p>
-      </div>
-    </div>
-    <div class="benefit">
-      <div class="benefit-icon">📈</div>
-      <div>
-        <h3>Gráfico Keepa integrado</h3>
-        <p>Veja o histórico de preços e BSR dos últimos 12 meses sem precisar abrir o Keepa separado. Tudo na mesma tela.</p>
-      </div>
-    </div>
-    <div class="benefit">
-      <div class="benefit-icon">✅</div>
-      <div>
-        <h3>Verificação de elegibilidade</h3>
-        <p>Link direto para checar no Seller Central se você pode vender aquele produto na sua conta. Zero surpresas na hora de listar.</p>
-      </div>
-    </div>
-    <div class="benefit">
-      <div class="benefit-icon">🏭</div>
-      <div>
-        <h3>20+ Fornecedores USA curados</h3>
-        <p>Lista das melhores distribuidoras americanas de casa, jardim e pet shop — com avaliação, pros e contras, e link direto para cadastro.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PROVA SOCIAL -->
-<section class="social-proof">
-  <p class="section-label">Resultados reais</p>
-  <h2 class="section-title" style="margin-bottom:40px">Vendedores que usam o SellerPro</h2>
-  <div class="stats">
-    <div><div class="stat-num">30s</div><div class="stat-label">Para analisar um produto</div></div>
-    <div><div class="stat-num">6+</div><div class="stat-label">Ferramentas substituídas</div></div>
-    <div><div class="stat-num">R$97</div><div class="stat-label">Pagamento único</div></div>
-  </div>
-  <div class="testis">
-    <div class="testi">
-      <div class="testi-stars">★★★★★</div>
-      <p class="testi-text">"Antes eu ficava 2 horas por produto entre Keepa, calculadora FBA e Seller Central. Com o SellerPro faço em 5 minutos. Já evitei 3 produtos com IP que teriam bloqueado minha conta."</p>
-      <div class="testi-author">
-        <div class="avatar">M</div>
-        <div><div class="author-name">Marcos Oliveira</div><div class="author-city">Vendedor FBA · Miami, FL</div></div>
-      </div>
-    </div>
-    <div class="testi">
-      <div class="testi-stars">★★★★★</div>
-      <p class="testi-text">"O Deal Score me salvou várias vezes. Um produto parecia ótimo, mas o score deu 24. Fui verificar — BSR de 600.000 e vendia 8 unidades por mês. Não comprei. Acertei em cheio."</p>
-      <div class="testi-author">
-        <div class="avatar">A</div>
-        <div><div class="author-name">Ana Carolina</div><div class="author-city">Vendedora FBA · Orlando, FL</div></div>
-      </div>
-    </div>
-    <div class="testi">
-      <div class="testi-stars">★★★★★</div>
-      <p class="testi-text">"A calculadora pré-preenchida é o que eu mais uso. Coloco a URL do DollarDays, já aparece preço Amazon e custo de compra. Só ajusto e já sei se fecha. Economizei horas por semana."</p>
-      <div class="testi-author">
-        <div class="avatar">R</div>
-        <div><div class="author-name">Roberto Silva</div><div class="author-city">Vendedor FBA · Tampa, FL</div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- OFERTA -->
-<section class="offer" id="oferta">
-  <p class="section-label">Oferta especial de lançamento</p>
-  <h2 class="section-title" style="margin-bottom:40px">Acesso completo ao SellerPro</h2>
-  <div class="offer-card">
-    <div class="offer-ribbon">🔥 LANÇAMENTO</div>
-    <p class="offer-title">SellerPro — Acesso Vitalício</p>
-    <div class="price-block">
-      <div class="price-from">De R$197</div>
-      <div class="price-big"><sup>R$</sup>97</div>
-    </div>
-    <p class="price-once">✓ Pagamento único — sem mensalidade</p>
-    <ul class="offer-list">
+<section class="price-section">
+  <div class="price-card">
+    <div class="price-name">SellerPro — Acesso Completo</div>
+    <div class="price-from">De R$197</div>
+    <div class="price-val"><sup>R$</sup>97</div>
+    <div class="price-type">✓ Pagamento único · Acesso vitalício</div>
+    <ul class="price-items">
       <li>Busca automática por URL de fornecedor</li>
-      <li>Calculadora FBA com preenchimento automático</li>
-      <li>Deal Score 0–100 com alertas IP e Hazmat</li>
-      <li>Gráfico Keepa integrado (12 meses)</li>
-      <li>Verificação de elegibilidade no Seller Central</li>
-      <li>20+ distribuidoras USA curadas</li>
-      <li>Calculadora ROI e margem</li>
-      <li>Atualizações inclusas sem custo extra</li>
+      <li>Calculadora FBA pré-preenchida</li>
+      <li>Deal Score com alertas IP e Hazmat</li>
+      <li>Gráfico Keepa integrado</li>
+      <li>Verificação de elegibilidade</li>
+      <li>20+ fornecedores USA curados</li>
+      <li>Atualizações inclusas</li>
     </ul>
-    <a href="https://wa.me/5533991101426?text=Ol%C3%A1%21+Quero+acessar+o+SellerPro+por+R%2497" class="btn-offer" target="_blank">
-      Quero Acessar por R$97 &#8594;
-    </a>
-    <div class="guarantee-box">
-      <span style="font-size:28px">🛡️</span>
-      <p><strong>Garantia de 7 dias.</strong> Se não gostar por qualquer motivo, devolvemos 100% do valor. Sem perguntas.</p>
-    </div>
+    <a href="https://wa.me/5533991101426?text=Ol%C3%A1%21+Quero+o+SellerPro+por+R%2497" class="buy-btn" target="_blank">Quero Acessar por R$97 →</a>
+    <p class="guarantee">🛡️ Garantia de 7 dias — 100% do dinheiro de volta</p>
   </div>
 </section>
 
-<!-- FAQ -->
-<section class="faq-simple">
-  <h2 class="section-title" style="margin-bottom:8px">Dúvidas frequentes</h2>
-  <p class="section-sub" style="margin-bottom:32px">Respondemos tudo antes de você decidir</p>
-
+<section class="faq">
+  <h2>Dúvidas rápidas</h2>
   <div class="faq-item">
     <div class="faq-q">Precisa instalar algo? <span>+</span></div>
-    <div class="faq-a">Não. O SellerPro é 100% online. Acessa pelo navegador de qualquer computador, sem instalação.</div>
+    <div class="faq-a">Não. É 100% online, acessa pelo navegador de qualquer computador.</div>
   </div>
   <div class="faq-item">
     <div class="faq-q">Funciona com minha conta Amazon? <span>+</span></div>
-    <div class="faq-a">Sim. Funciona com qualquer conta Amazon Seller Central ativa nos EUA (Amazon.com).</div>
+    <div class="faq-a">Sim. Funciona com qualquer conta Amazon Seller Central ativa nos EUA.</div>
   </div>
   <div class="faq-item">
-    <div class="faq-q">Como recebo o acesso após o pagamento? <span>+</span></div>
-    <div class="faq-a">Após confirmação do pagamento via WhatsApp, enviamos seu login e senha em até 24 horas.</div>
+    <div class="faq-q">Como recebo o acesso? <span>+</span></div>
+    <div class="faq-a">Após confirmação do pagamento pelo WhatsApp, enviamos login e senha em até 24h.</div>
   </div>
   <div class="faq-item">
-    <div class="faq-q">E se eu quiser reembolso? <span>+</span></div>
-    <div class="faq-a">Você tem 7 dias de garantia total. Basta entrar em contato que devolvemos 100% do valor, sem questionamentos.</div>
-  </div>
-  <div class="faq-item">
-    <div class="faq-q">É pagamento único mesmo? Sem mensalidade? <span>+</span></div>
-    <div class="faq-a">Sim, 100% pagamento único. Paga R$97 uma vez e tem acesso para sempre, incluindo futuras atualizações.</div>
+    <div class="faq-q">É realmente pagamento único, sem mensalidade? <span>+</span></div>
+    <div class="faq-a">Sim. Paga R$97 uma vez e tem acesso para sempre, incluindo atualizações.</div>
   </div>
 </section>
 
-<!-- CTA FINAL -->
-<section class="cta-final">
-  <h2>Comece agora a encontrar produtos <span>lucrativos</span></h2>
-  <p>Acesso vitalício por apenas R$97 — sem mensalidade.</p>
-  <a href="https://wa.me/5533991101426?text=Ol%C3%A1%21+Quero+acessar+o+SellerPro+por+R%2497" class="btn-cta" target="_blank" style="font-size:19px;padding:18px 44px">
-    Quero o SellerPro Agora &#8594;
-  </a>
-  <p style="color:#37474f;font-size:13px;margin-top:14px">&#9679; Garantia 7 dias &nbsp; &#9679; Pagamento único &nbsp; &#9679; Acesso imediato</p>
+<section class="cta-footer">
+  <h2>Comece agora a vender <span>com lucro</span></h2>
+  <p>Acesso vitalício por R$97 — sem mensalidade, sem surpresas.</p>
+  <a href="https://wa.me/5533991101426?text=Ol%C3%A1%21+Quero+o+SellerPro+por+R%2497" class="btn" target="_blank">Falar no WhatsApp →</a>
 </section>
 
 <footer>
-  © 2026 SellerPro · Todos os direitos reservados ·
-  <a href="/login" style="color:#ff9900;text-decoration:none">Já sou cliente — Entrar</a>
+  © 2026 SellerPro · <a href="/login">Já sou cliente — Entrar</a>
 </footer>
 
 <script>
 document.querySelectorAll('.faq-q').forEach(q=>{
   q.addEventListener('click',()=>{
-    const a=q.nextElementSibling;
-    const open=a.style.display==='block';
+    const a=q.nextElementSibling, open=a.style.display==='block';
     document.querySelectorAll('.faq-a').forEach(x=>x.style.display='none');
     document.querySelectorAll('.faq-q span').forEach(x=>x.textContent='+');
     if(!open){a.style.display='block';q.querySelector('span').textContent='−';}
