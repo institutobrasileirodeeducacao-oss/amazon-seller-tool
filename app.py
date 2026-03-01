@@ -61,7 +61,10 @@ LOGIN_HTML = """<!DOCTYPE html>
 </html>"""
 
 # ── ROTAS ─────────────────────────────────────────────────────────────────────
-@app.route("/", methods=["GET","POST"])
+@app.route("/")
+def index():
+    return send_from_directory(DIR, "sales.html")
+
 @app.route("/login", methods=["GET","POST"])
 def login():
     if request.method == "POST":
