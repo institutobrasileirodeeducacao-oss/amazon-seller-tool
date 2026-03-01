@@ -16,7 +16,7 @@ GMAIL_USER = os.environ.get("GMAIL_USER", "profgiseleenf@gmail.com")
 GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "")
 BASE_URL = os.environ.get("BASE_URL", "https://amazon-seller-tool.onrender.com")
 
-DB = os.path.join(DIR, "users.db")
+DB = os.environ.get("DB_PATH", "/tmp/users.db")
 
 SSL_CTX = ssl.create_default_context()
 SSL_CTX.check_hostname = False
