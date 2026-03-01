@@ -8,7 +8,7 @@ PORT = int(os.environ.get("PORT", 8080))
 DIR  = os.path.dirname(os.path.abspath(__file__))
 
 # ── CREDENCIAIS DE ACESSO ─────────────────────────────────────────────────────
-ACCESS_USER     = os.environ.get("ACCESS_USER", "gisele")
+ACCESS_USER     = os.environ.get("ACCESS_USER", "cliente")
 ACCESS_PASSWORD = os.environ.get("ACCESS_PASSWORD", "Amazon2024!")
 
 SSL_CTX = ssl.create_default_context()
